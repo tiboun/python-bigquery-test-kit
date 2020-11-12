@@ -1,0 +1,14 @@
+[paths]
+source =
+   src
+   */site-packages
+
+[run]
+branch = false
+parallel = false
+source =
+    bq_test_kit
+
+[report]
+show_missing = true
+precision = 2

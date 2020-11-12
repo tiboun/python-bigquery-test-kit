@@ -1,0 +1,23 @@
+[SIMILARITIES]
+
+# Minimum lines number of a similarity.
+min-similarity-lines=4
+
+# Ignore comments when computing similarities.
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities.
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities.
+ignore-imports=yes
+
+[FORMAT]
+max-line-length=119
+
+[MESSAGES CONTROL]
+; Rule disabled since abstractions may occurs with 1 method.
+; R0903: Too few public methods
+; Rule disabled since this is used only inside DSL constructors.
+; R0902 : Too many instance attributes (8/7) (too-many-instance-attributes)
+disable=R0903, R0902
