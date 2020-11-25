@@ -203,6 +203,25 @@ WARNING
 
 DSL may change with breaking change until release of 1.0.0.
 
+Editing in VSCode
+=================
+
+In order to benefit from VSCode features such as debugging, you should type the following commands in the root folder of this project.
+
+Linux
+-----
+
+ - python3 -m venv .venv
+ - source .venv/bin/activate
+ - pip3 install -r requirements.txt -r requirements-test.txt -e .
+
+Windows
+-------
+
+ - py -3 -m venv .venv
+ - .venv\scripts\activate
+ - python -m pip install -r requirements.txt -r requirements-test.txt -e .
+
 Changelog
 =========
 

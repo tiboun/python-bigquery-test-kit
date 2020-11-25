@@ -1,0 +1,11 @@
+pytest
+pytest-cov
+varsubst
+jinja2
+pytz
+docutils
+flake8
+isort
+setuptools-scm
+twine
+pylint
