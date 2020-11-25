@@ -95,7 +95,7 @@ with Tables.from_(p, p) as tables:
     assert table_foofoo.show() is not None
     assert table_foobar.show() is not None
     assert table_barfoo.show() is not None
-        assert table_barbar.show() is not None
+    assert table_barbar.show() is not None
 ```
 
 More usage can be found in [it tests](https://github.com/tiboun/python-bq-test-kit/tree/main/tests/it).
