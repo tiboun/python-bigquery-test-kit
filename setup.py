@@ -12,7 +12,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
         install_requires = r.read()
         setup(
             name='bq-test-kit',
-            version='0.1.1',
+            version='0.1.2',
             url='https://github.com/tiboun/python-bq-test-kit',
             author='Bounkong Khamphousone',
             author_email='bounkong@gmail.com',
