@@ -9,10 +9,12 @@
 from copy import deepcopy
 
 from google.cloud.bigquery.table import Table as BQTable
-from google.cloud.bigquery.table import TimePartitioning, TimePartitioningType
+from google.cloud.bigquery.table import TimePartitioning
 
 from bq_test_kit.bq_dsl.bq_resources.partitions.base_partition import \
     BasePartition
+from bq_test_kit.bq_dsl.bq_resources.partitions.time_partitionning_type import \
+    TimePartitioningType
 
 
 class TimeField(BasePartition):
