@@ -94,7 +94,7 @@ class Dataset(BaseBQResource):
         if not table:
             dataset = deepcopy(self)
             table_schema = schema if schema else []
-            table = Table(name, dataset=dataset, alias=alias, schema=table_schema, bq_client=self._bq_client,
+            table = Table(name, from_dataset=dataset, alias=alias, schema=table_schema, bq_client=self._bq_client,
                           bqtk_config=self.bqtk_config)
             dataset.tables.append(table)
         return table

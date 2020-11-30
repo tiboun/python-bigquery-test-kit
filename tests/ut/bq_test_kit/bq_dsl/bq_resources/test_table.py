@@ -13,7 +13,8 @@ from bq_test_kit.bq_dsl.bq_resources.data_loaders import (DsvDataLoader,
                                                           JsonDataLoader)
 from bq_test_kit.bq_dsl.bq_resources.partitions import (BasePartition,
                                                         IngestionTime,
-                                                        NoPartition, Range)
+                                                        NoPartition, Range,
+                                                        TimeField)
 from bq_test_kit.bq_dsl.bq_resources.resource_strategy import (
     CleanAfter, CleanBeforeAndAfter, CleanBeforeAndKeepAfter, Noop)
 from bq_test_kit.bq_test_kit_config import BQTestKitConfig
@@ -29,7 +30,7 @@ def test_default_constructor():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     assert table.dataset.project.name == "test_project"
     assert table.dataset.name == "dataset_foo"
     assert table.name == "table_bar"
@@ -49,7 +50,7 @@ def test_full_constructor():
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
     schema = [SchemaField("f1", field_type="INT64")]
-    table = Table("table_bar", dataset=ds, alias="bar", bq_client=None,
+    table = Table("table_bar", from_dataset=ds, alias="bar", bq_client=None,
                   bqtk_config=conf, resource_strategy=Noop(),
                   isolate_with=lambda x: x.name + "bar",
                   partition_type=IngestionTime(),
@@ -73,7 +74,7 @@ def test_change_noop():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     table = table.noop()
     assert isinstance(table.resource_strategy, Noop)
 
@@ -85,7 +86,7 @@ def test_change_clean_and_keep():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     table = table.clean_and_keep()
     assert isinstance(table.resource_strategy, CleanBeforeAndKeepAfter)
 
@@ -97,7 +98,7 @@ def test_change_clean_always():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     table = table.with_resource_strategy(CleanBeforeAndAfter())
     assert isinstance(table.resource_strategy, CleanBeforeAndAfter)
 
@@ -109,7 +110,7 @@ def test_change_isolate():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     table = table.isolate()
     assert table.isolate_func(table) == f"{table.name}_context"
     assert table.fqdn() == (f"{table.dataset.project.name}."
@@ -124,7 +125,7 @@ def test_change_create_options():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     create_options = {"exists_ok": True, "timeout": 10}
     table = table.with_create_options(**create_options)
     assert table.create_options == create_options
@@ -139,7 +140,7 @@ def test_change_alias():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     table = table.with_alias("bar")
     assert table.alias == "bar"
     table = table.with_alias(None)
@@ -153,7 +154,7 @@ def test_change_partition_by():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     table = table.partition_by(Range(on_field="zoo",
                                      start=0,
                                      end=10000,
@@ -172,7 +173,7 @@ def test_invalid_change_partition_by():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     with pytest.raises(Exception):
         table.partition_by("zoo")
 
@@ -184,7 +185,7 @@ def test_change_schema():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     table = table.with_schema(from_="""
         [
             {
@@ -207,7 +208,7 @@ def test_invalid_change_schema():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     with pytest.raises(InvalidInstanceException):
         table.with_schema(from_=[1, 2, 3])
     with pytest.raises(InvalidInstanceException):
@@ -221,7 +222,7 @@ def test_invalid_json_schema():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     with pytest.raises(JSONDecodeError):
         table.with_schema(from_="this is not a json")
 
@@ -240,7 +241,7 @@ def test_csv_loader():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     pfl = PackageFileLoader("tests/ut/bq_test_kit/resource_loaders/resources/package_file_test_resource.txt")
     assert isinstance(table.dsv_loader(from_=pfl), DsvDataLoader)
 
@@ -252,6 +253,39 @@ def test_json_loader():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     pfl = PackageFileLoader("tests/ut/bq_test_kit/resource_loaders/resources/package_file_test_resource.txt")
     assert isinstance(table.json_loader(from_=pfl), JsonDataLoader)
+
+
+def test_table_dsl():
+    """
+        Check if deepcopy works well for table. Closes issue #2.
+    """
+    conf = BQTestKitConfig({
+        DEFAULT_LOCATION: "EU"
+    })
+    project = Project("test_project", bq_client=None,
+                      bqtk_config=conf)
+    project = project \
+        .dataset("dataset_foo").isolate() \
+        .table("table_foo") \
+        .partition_by(IngestionTime()) \
+        .table("table_bar") \
+        .partition_by(TimeField("foo_date")) \
+        .table("table_foobar") \
+        .partition_by(IngestionTime()) \
+        .project.dataset("dataset_bar").isolate() \
+        .table("table_zoo") \
+        .partition_by(IngestionTime()) \
+        .project
+    assert [dataset.name for dataset in project.datasets] == ["dataset_foo", "dataset_bar"]
+    dataset_foo = project.dataset("dataset_foo")
+    assert dataset_foo.name == "dataset_foo"
+    assert [table.name for table in dataset_foo.tables] == ["table_foo", "table_bar", "table_foobar"]
+    assert isinstance(dataset_foo.table("table_foo").partition_type, IngestionTime)
+    assert isinstance(dataset_foo.table("table_bar").partition_type, TimeField)
+    assert isinstance(dataset_foo.table("table_foobar").partition_type, IngestionTime)
+    dataset_bar = project.dataset("dataset_bar")
+    assert [table.name for table in dataset_bar.tables] == ["table_zoo"]
+    assert isinstance(dataset_bar.table("table_zoo").partition_type, IngestionTime)

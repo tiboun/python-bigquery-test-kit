@@ -32,7 +32,7 @@ class Table(BaseBQResource):
     """
 
     def __init__(self, name: str,
-                 *, dataset, alias: Optional[str] = None,
+                 *, from_dataset, alias: Optional[str] = None,
                  resource_strategy: BaseResourceStrategy = CleanAfter(), bq_client: Client,
                  bqtk_config: BQTestKitConfig,
                  isolate_with=lambda x: x.name,
@@ -66,7 +66,7 @@ class Table(BaseBQResource):
         """
         super().__init__(name=name, bq_client=bq_client,
                          bqtk_config=bqtk_config)
-        self.dataset = dataset
+        self.dataset = from_dataset
         self.alias = alias
         self.isolate_func = isolate_with
         self.create_options = create_options
@@ -303,21 +303,21 @@ class Table(BaseBQResource):
         return self._dataset
 
     @dataset.setter
-    def dataset(self, dataset):
+    def dataset(self, target_dataset):
         """Set dataset where this table belongs to and update project property as well as table function.
         Table function allows to create multiple table inside a dataset fluently.
 
         Args:
             dataset (Dataset): dataset where this table belongs to.
         """
-        self._dataset = dataset
-        self.project = dataset.project
-        self.table = dataset.table
+        self._dataset = target_dataset
+        self.project = target_dataset.project
+        self.table = target_dataset.table
 
     def __deepcopy__(self, memo):
-        return Table(
+        table = Table(
             deepcopy(self.name, memo),
-            dataset=deepcopy(self.dataset, memo),
+            from_dataset=deepcopy(self.dataset, memo),
             alias=deepcopy(self.alias, memo),
             # copy is not done because bq client have non-trivial state
             # that is local and unpickleable
@@ -329,3 +329,5 @@ class Table(BaseBQResource):
             schema=deepcopy(self.schema),
             **deepcopy(self.create_options, memo)
         )
+        table.dataset.tables = [table if self.name == t.name else t for t in table.dataset.tables]
+        return table

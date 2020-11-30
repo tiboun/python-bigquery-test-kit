@@ -50,7 +50,7 @@ def test_change_destination():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
     assert bq_tpl.job_config.destination is None
     bq_tpl = bq_tpl.with_destination(table)
     assert bq_tpl.job_config.destination.table_id == "table_bar"
@@ -147,8 +147,8 @@ def test_global_dict():
     project = Project("test_project", bq_client=None, bqtk_config=conf)
     ds = Dataset("dataset_foo", project=project, bq_client=None,
                  bqtk_config=conf)
-    table = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf)
-    table_with_alias = Table("table_bar", dataset=ds, bq_client=None, bqtk_config=conf).with_alias("table_foobar")
+    table = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf)
+    table_with_alias = Table("table_bar", from_dataset=ds, bq_client=None, bqtk_config=conf).with_alias("table_foobar")
     bq_tpl = bq_tpl.with_global_dict({"test_project": "unknown"})
     assert bq_tpl.global_dict == {"test_project": "unknown"}
     bq_tpl = bq_tpl.update_global_dict([table, ds, project, table_with_alias])

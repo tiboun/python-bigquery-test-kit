@@ -225,6 +225,11 @@ Windows
 Changelog
 =========
 
+0.1.1
+-----
+
+ - Fix table reference in Dataset (closes #2)
+
 0.1.0
 -----
 
