@@ -6,7 +6,6 @@
 # C0114 disabled because this module contains only one class
 # pylint: disable=C0114
 
-from base64 import b64encode
 from copy import deepcopy
 from functools import reduce
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -17,9 +16,9 @@ from google.cloud.bigquery.job import (QueryJob, QueryJobConfig,
 from google.cloud.bigquery.query import (ArrayQueryParameter,
                                          ScalarQueryParameter,
                                          StructQueryParameter, UDFResource)
-from google.cloud.bigquery.table import Row, RowIterator
 from logzero import logger
 
+from bq_test_kit.bq_dsl.bq_query_results import BQQueryResult
 from bq_test_kit.bq_dsl.bq_resources import BaseBQResource, Project, Table
 from bq_test_kit.bq_test_kit_config import BQTestKitConfig
 from bq_test_kit.constants import DEFAULT_JOB_ID_PREFIX
@@ -33,7 +32,7 @@ class BQQueryTemplate():
 
     def __init__(self,
                  *, from_: Union[BaseResourceLoader, str], bqtk_config: BQTestKitConfig,
-                 location: Optional[str] = None, bq_client: Client, result_as_dict: bool = True,
+                 location: Optional[str] = None, bq_client: Client,
                  job_config: QueryJobConfig = None, project: Project = None,
                  interpolators: List[BaseInterpolator] = None, global_dict: Dict[str, Any] = None) -> None:
         """Constructor of BQQueryTemplate
@@ -43,10 +42,6 @@ class BQQueryTemplate():
             bqtk_config (BQTestKitConfig): config used accross the query DSL.
             bq_client (Client): instance of bigquery client to use accross the datasetL.
             location (Optional[str], optional): force location for dataset. Defaults extracted from bqtk_config.
-            result_as_dict (bool, optional):
-                Transform BigQuery rows as dict.
-                Transform array of bytes into base64 encoded string.
-                Defaults to True.
             job_config (QueryJobConfig, optional): Configure job. Defaults to QueryJobConfig().
             project (Project, optional): project in which this query should be run.
                 Allows usage of relative table name. Defaults to None.
@@ -57,7 +52,6 @@ class BQQueryTemplate():
         """
         self.from_ = from_
         self._bq_client = bq_client
-        self.result_as_dict = result_as_dict
         self.job_config = job_config if job_config else QueryJobConfig()
         self.location = location if location else bqtk_config.get_default_location()
         self.project = project
@@ -65,14 +59,14 @@ class BQQueryTemplate():
         self.bqtk_config = bqtk_config
         self.global_dict = global_dict if global_dict else {}
 
-    def run(self) -> Union[List[Row], List[Dict[str, Any]]]:
-        """Execute the query and return a list of Row if result_as_dict is false, List of Dict otherwise.
+    def run(self) -> BQQueryResult:
+        """Execute the query and return a BQQueryResult.
 
         Returns:
-            Union[List[Row], List[Dict[str, Any]]]: list of Row if result_as_dict is false, List of Dict otherwise.
+            BQQueryResult: results are stored in this object.
         """
         interpolated_query = self._interpolate()
-        logger.info("Query rendered as :\n%s", interpolated_query)
+        logger.debug("Query rendered as :\n%s", interpolated_query)
         query_job: QueryJob = self._bq_client.query(
             interpolated_query,
             job_id_prefix=DEFAULT_JOB_ID_PREFIX,
@@ -80,12 +74,9 @@ class BQQueryTemplate():
             location=self.location,
             project=self.project.fqdn() if self.project else None
         )
-        result = query_job.result(max_results=0 if self.job_config.destination else None)
-        if self.result_as_dict:
-            result = self._convert_row_to_dict(result)
-        else:
-            result = list(result)
-        return result
+        logger.info("Job id is : %s", query_job.job_id)
+        row_iterator = query_job.result(max_results=0 if self.job_config.destination else None)
+        return BQQueryResult(row_iterator)
 
     def allow_large_results(self, allow: bool):
         """Allow large query results tables (legacy SQL, only)
@@ -98,20 +89,6 @@ class BQQueryTemplate():
         """
         query_template = deepcopy(self)
         query_template.job_config.allow_large_results = allow
-        return query_template
-
-    def with_result_as_dict(self, as_dict: bool):
-        """Allow results to be returned as dictionary instead of Row.
-           Array of bytes will be returned as base64 encoded string as well in order to ease testing.
-
-        Args:
-            as_dict (bool): if true return a dict else return Rows
-
-        Returns:
-            BQQueryTemplate: a new instance of BQQueryTemplate with result_as_dict set.
-        """
-        query_template = deepcopy(self)
-        query_template.result_as_dict = as_dict
         return query_template
 
     def with_destination(self, table: Table, partition: str = None):
@@ -341,24 +318,8 @@ class BQQueryTemplate():
             # copy is not done because bq client have non-trivial state
             # that is local and unpickleable
             bq_client=self._bq_client,
-            result_as_dict=deepcopy(self.result_as_dict, memo),
             job_config=deepcopy(self.job_config, memo),
             project=deepcopy(self.project, memo),
             interpolators=deepcopy(self.interpolators),
             global_dict=deepcopy(self.global_dict)
         )
-
-    @staticmethod
-    def _convert_row_to_dict(row_iterator: RowIterator):
-        def _convert_type(element: Any):
-            convertion_result = element
-            if isinstance(element, bytes):
-                convertion_result = b64encode(element).decode('ascii')
-            elif isinstance(element, (dict, Row)):
-                convertion_result = {k: _convert_type(v) for k, v in element.items()}
-            elif isinstance(element, list):
-                convertion_result = [_convert_type(v) for v in element]
-            return convertion_result
-
-        result = [_convert_type(row) for row in row_iterator]
-        return result
