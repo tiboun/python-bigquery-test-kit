@@ -8,7 +8,7 @@
 
 from collections import OrderedDict
 from contextlib import ExitStack
-from typing import List, NoReturn
+from typing import List, NoReturn, Tuple
 
 from logzero import logger
 
@@ -48,7 +48,7 @@ class Tables:
         """
         return Tables(*bq_resources)
 
-    def __enter__(self) -> tuple:
+    def __enter__(self) -> Tuple[Table, ...]:
         flattened_bq_resources = self._flatten_bq_resources()
         bqr_str = ", ".join([bqr.fqdn() for bqr in flattened_bq_resources])
         logger.info("Creating the following resources %s", bqr_str)
