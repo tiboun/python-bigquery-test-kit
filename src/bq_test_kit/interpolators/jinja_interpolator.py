@@ -21,7 +21,7 @@ class JinjaInterpolator(BaseInterpolator):
     """Interpolate with jinja template and benefits from all it's capabilities.
     """
 
-    def __init__(self, local_dict: Dict[str, Any], environment: Environment = None) -> None:
+    def __init__(self, local_dict: Dict[str, Any] = None, environment: Environment = None) -> None:
         """Constructor of JinjaInterpolator.
 
         Args:
