@@ -27,7 +27,6 @@ def test_constructor():
     bq_tpl = BQQueryTemplate(from_=pfl, bqtk_config=conf, bq_client=None)
     assert isinstance(bq_tpl.from_, PackageFileLoader)
     assert bq_tpl._bq_client is None
-    assert bq_tpl.result_as_dict is True
     assert bq_tpl.job_config is not None
     assert bq_tpl.location == "EU"
     assert bq_tpl.project is None
@@ -96,15 +95,6 @@ def test_change_query_cache():
     assert bq_tpl.job_config.use_query_cache is None
     bq_tpl = bq_tpl.use_query_cache(True)
     assert bq_tpl.job_config.use_query_cache is True
-
-
-def test_change_result_as_dict():
-    pfl = PackageFileLoader("tests/ut/bq_test_kit/bq_dsl/resources/dummy_query.sql")
-    conf = BQTestKitConfig({DEFAULT_LOCATION: "EU"})
-    bq_tpl = BQQueryTemplate(from_=pfl, bqtk_config=conf, bq_client=None)
-    assert bq_tpl.result_as_dict is True
-    bq_tpl = bq_tpl.with_result_as_dict(False)
-    assert bq_tpl.result_as_dict is False
 
 
 def test_change_write_disposition():
