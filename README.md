@@ -56,8 +56,8 @@ with bqtk.project().dataset("my_dataset").isolate().clean_and_keep() as d:
         # noop() and isolate() are also supported for tables.
         pfl = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/bq_resources/data_loaders/resources/dummy_data.csv")
         t.csv_loader(from_=pfl).load()
-        rows = bqtk.query_template(from_=f"select count(*) as nb from `{t.fqdn()}`").run()
-        assert len(rows) > 0
+        result = bqtk.query_template(from_=f"select count(*) as nb from `{t.fqdn()}`").run()
+        assert len(result.rows) > 0
     # table `GOOGLE_CLOUD_PROJECT.my_dataset_basic.my_table` is deleted
 # dataset `GOOGLE_CLOUD_PROJECT.my_dataset_basic` is deleted
 ```
@@ -137,17 +137,17 @@ client = Client(location="EU")
 bqtk_conf = BQTestKitConfig().with_test_context("basic")
 bqtk = BQTestKit(bq_client=client, bqtk_config=bqtk_conf)
 
-rows = bqtk.query_template(from_="select ${NB_USER} as nb") \
-           .with_global_dict({"NB_USER": "2"}) \
-           .add_renderer(ShellInterpolator()) \
-           .run()
-assert len(rows) == 1
-assert rows[0]["nb"] == 2
-rows = bqtk.query_template(from_="select {{NB_USER}} as nb") \
-           .with_renderers([JinjaInterpolator({"NB_USER": "3"})]) \
-           .run()
-assert len(rows) == 1
-assert rows[0]["nb"] == 3
+result = bqtk.query_template(from_="select ${NB_USER} as nb") \
+             .with_global_dict({"NB_USER": "2"}) \
+             .add_renderer(ShellInterpolator()) \
+             .run()
+assert len(result.rows) == 1
+assert result.rows[0]["nb"] == 2
+result = bqtk.query_template(from_="select {{NB_USER}} as nb") \
+             .with_renderers([JinjaInterpolator({"NB_USER": "3"})]) \
+             .run()
+assert len(result.rows) == 1
+assert result.rows[0]["nb"] == 3
 ```
 
 
@@ -224,6 +224,19 @@ Windows
 
 Changelog
 =========
+
+0.2.0
+-----
+
+ - Change return type of `Tables.__enter__` (closes #6)
+ - Make jinja's local dictionary optional (closes #7)
+ - Wrap query result into BQQueryResult (closes #9)
+
+
+0.1.2
+-----
+
+ - Fix time partitioning type in TimeField (closes #3)
 
 0.1.1
 -----
