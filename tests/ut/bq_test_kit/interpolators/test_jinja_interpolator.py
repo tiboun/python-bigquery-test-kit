@@ -12,3 +12,9 @@ def test_interpolate():
                             " Global key has value {{GLOBAL_KEY}}", {"GLOBAL_KEY": "G_VALUE"})
     assert result == ("Local key has value VALUE."
                       " Global key has value G_VALUE")
+
+
+def test_default_constructor():
+    ji = JinjaInterpolator()
+    assert ji.local_dict == {}
+    assert ji.environment is not None
