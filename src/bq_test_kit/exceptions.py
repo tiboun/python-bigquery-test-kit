@@ -37,3 +37,24 @@ class InvalidInstanceException(Exception):
         )
         super().__init__(f"Expected one of {instances}"
                          f" but given {given_instance}")
+
+
+class DataLiteralTransformException(Exception):
+    """
+        Raised when data could not be transformed to a data literal.
+        May be caused by schema mismatch.
+    """
+
+
+class RowParsingException(Exception):
+    """
+        Raised when a line could not be parsed.
+    """
+
+
+class UnexpectedTypeException(Exception):
+    """
+        Raised when a BigQuery type is not handled.
+    """
+    def __init__(self, field_type: str) -> None:
+        super().__init__(f"Type {field_type} is not handled.")

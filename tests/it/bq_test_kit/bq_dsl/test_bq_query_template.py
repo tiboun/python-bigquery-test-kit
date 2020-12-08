@@ -23,7 +23,11 @@ def test_simple_query(bqtk: BQTestKit):
         schema = [SchemaField("f1", field_type="STRING")]
         with ds.table("table_bar", schema=schema).isolate() as t:
             result = bqtk.query_template(from_=f"select count(*) as nb from `{t.fqdn()}`").run()
+            assert len(result.schema) == 1
+            assert result.schema[0].name == "nb"
+            assert str.upper(result.schema[0].field_type) in ["INTEGER", "INT64"]
             assert len(result.rows) == 1
+            assert result.total_rows == 1
             assert result.rows[0]["nb"] == 0
 
 

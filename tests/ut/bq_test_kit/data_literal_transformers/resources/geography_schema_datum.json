@@ -1,0 +1,7 @@
+{"f_geography":"POINT(-122.35 47.62)"}
+{"f_geography":"point(122.35 -47.62)"}
+{"f_geography":"point( -122.35  47.62 )"}
+{"f_geography":"PoInT( -122.35  -47.62 )"}
+{"f_geography":"PoinT( +122.35  +47.62 )"}
+{"f_geography":"NotPoInT( -122.35  47.62 )"}
+{"f_geography":"NotPoInT( -122.35  47.62 )"}
