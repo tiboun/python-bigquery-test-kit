@@ -6,7 +6,6 @@
 # C0114 disabled because this module contains only one class
 # pylint: disable=C0114
 
-import json
 from copy import deepcopy
 from typing import List, Optional, Union
 
@@ -22,12 +21,13 @@ from bq_test_kit.bq_dsl.bq_resources.partitions import (BasePartition,
                                                         NoPartition)
 from bq_test_kit.bq_dsl.bq_resources.resource_strategy import (
     BaseResourceStrategy, CleanAfter, CleanBeforeAndKeepAfter, Noop)
+from bq_test_kit.bq_dsl.schema_mixin import SchemaMixin
 from bq_test_kit.bq_test_kit_config import BQTestKitConfig
 from bq_test_kit.exceptions import InvalidInstanceException
 from bq_test_kit.resource_loaders import BaseResourceLoader, PackageFileLoader
 
 
-class Table(BaseBQResource):
+class Table(BaseBQResource, SchemaMixin):
     """Table DSL which allows you to define its properties and access data loader DSL.
     """
 
@@ -230,28 +230,7 @@ class Table(BaseBQResource):
 
     @schema.setter
     def schema(self, from_: Union[BaseResourceLoader, str, List[SchemaField]]):
-        if not isinstance(from_, (BaseResourceLoader, str, list)):
-            raise InvalidInstanceException(
-                    from_,
-                    expected_list_instances=[SchemaField],
-                    expected_instances=[BaseResourceLoader, str])
-        if isinstance(from_, list) and any([not isinstance(el, SchemaField) for el in from_]):
-            raise InvalidInstanceException(
-                    from_,
-                    expected_list_instances=[SchemaField],
-                    expected_instances=[BaseResourceLoader, str])
-        if isinstance(from_, (BaseResourceLoader, str)):
-            try:
-                json_schema_str = from_ if isinstance(from_, str) else from_.load()
-                json_schema = json.loads(json_schema_str)
-                self._schema = [SchemaField.from_api_repr(field) for field in json_schema]
-            except Exception:
-                logger.error("Failed to load schema with %s.", from_)
-                raise
-            else:
-                logger.info("Schema loaded successfully with %s.", from_)
-        else:
-            self._schema = from_
+        self._schema = self.to_schema_field_list(from_)
         return self
 
     def create(self) -> None:

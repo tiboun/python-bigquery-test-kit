@@ -1,0 +1,69 @@
+[
+  {
+    "mode": "REPEATED",
+    "name": "f_string",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_bytes",
+    "type": "BYTES"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_int",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_float",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_bool",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_timestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_date",
+    "type": "DATE"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_time",
+    "type": "TIME"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_datetime",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_numeric",
+    "type": "NUMERIC"
+  },
+  {
+    "fields": [
+      {
+        "mode": "REPEATED",
+        "name": "f_string",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_bytes",
+        "type": "BYTES"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "f_nested",
+    "type": "RECORD"
+  }
+]

@@ -1,0 +1,155 @@
+[
+  {
+    "mode": "REQUIRED",
+    "name": "f_string",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_bytes",
+    "type": "BYTES"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_int",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_float",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_bool",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_timestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_date",
+    "type": "DATE"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_time",
+    "type": "TIME"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_datetime",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_numeric",
+    "type": "NUMERIC"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_geography",
+    "type": "GEOGRAPHY"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "f_record",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "REQUIRED",
+        "name": "f_datetime",
+        "type": "DATETIME"
+      }
+    ]
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_repeated_record",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "REQUIRED",
+        "name": "f_string",
+        "type": "STRING"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_bytes",
+        "type": "BYTES"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_int",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_float",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_bool",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_timestamp",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_date",
+        "type": "DATE"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_time",
+        "type": "TIME"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_datetime",
+        "type": "DATETIME"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_numeric",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_geography",
+        "type": "GEOGRAPHY"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "f_record",
+        "type": "RECORD",
+        "fields": [
+          {
+            "mode": "REQUIRED",
+            "name": "f_datetime",
+            "type": "DATETIME"
+          }
+        ]
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_repeated_record",
+        "type": "RECORD",
+        "fields": [
+          {
+            "mode": "REQUIRED",
+            "name": "f_nested_string",
+            "type": "STRING"
+          }
+        ]
+      }
+    ]
+  }
+]
