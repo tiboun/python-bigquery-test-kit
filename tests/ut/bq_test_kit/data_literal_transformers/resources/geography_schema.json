@@ -1,0 +1,7 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "f_geography",
+    "type": "GEOGRAPHY"
+  }
+]

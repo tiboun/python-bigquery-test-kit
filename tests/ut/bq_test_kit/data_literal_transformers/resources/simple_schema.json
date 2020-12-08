@@ -1,0 +1,69 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "f_string",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_bytes",
+    "type": "BYTES"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_int",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_float",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_bool",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_timestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_date",
+    "type": "DATE"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_time",
+    "type": "TIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_datetime",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_numeric",
+    "type": "NUMERIC"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "f_geography",
+    "type": "GEOGRAPHY"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "f_datetime",
+        "type": "DATETIME"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "f_struct",
+    "type": "RECORD"
+  }
+]

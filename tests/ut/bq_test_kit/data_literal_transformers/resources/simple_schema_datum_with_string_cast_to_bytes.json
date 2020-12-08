@@ -1,0 +1,1 @@
+{"f_string":"str with quote ' and backslash \\","f_bytes":"any","f_int":1,"f_float":1.5,"f_bool":true,"f_timestamp":"2020-11-26 17:09:03.967259 UTC","f_date":"2020-11-26","f_time":"11:09:03","f_datetime":"2020-11-26 17:09:03","f_numeric":1.6,"f_geography":"POINT(-122.35 47.62)","f_struct":null}
