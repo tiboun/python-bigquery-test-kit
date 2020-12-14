@@ -64,6 +64,7 @@ class BaseDataLoader():
                 project=self.table.dataset.project.fqdn(),
                 job_config=self.load_job_config
             )
+            logger.info("Job id is : %s", load_job.job_id)
             load_job.result()
         return self.table
 
