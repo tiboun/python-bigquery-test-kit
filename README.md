@@ -7,17 +7,19 @@ BQ-test-kit enables Big Query testing by providing you an almost immutable DSL t
  - create and delete table, partitioned or not
  - load csv or json data into tables
  - run query templates
+ - transform json or csv data into a data literal
 
 You can, therefore, test your query with data as literals or instantiate
 datasets and tables in projects and load data into them.
 
-It's faster to run query with data as literals but using materialized tables seems easier to maintain in long-term.
+It's faster to run query with data as literals but using materialized tables is mandatory for some use cases.
 
 Immutability allows you to share datasets and tables definitions as a fixture and use it accros all tests,
 adapt the definitions as necessary without worrying about mutations.
 
 In order to have reproducible tests, BQ-test-kit add the ability to create isolated dataset or table,
 thus query's outputs are predictable and assertion can be done in details.
+If you are running simple queries (no DML), you can use data literal to make test running faster.
 
 Template queries are rendered via [varsubst](https://pypi.org/project/varsubst/) but you can provide your own
 interpolator by extending *bq_test_kit.interpolators.base_interpolator.BaseInterpolator*. Supported templates are
@@ -98,6 +100,41 @@ with Tables.from_(p, p) as tables:
     assert table_barbar.show() is not None
 ```
 
+Simple query
+--------
+
+```python
+
+import pytz
+
+from datetime import datetime
+from google.cloud.bigquery.client import Client
+from google.cloud.bigquery.schema import SchemaField
+from bq_test_kit.bq_test_kit import BQTestKit
+from bq_test_kit.bq_test_kit_config import BQTestKitConfig
+from bq_test_kit.data_literal_transformers.json_data_literal_transformer import JsonDataLiteralTransformer
+from bq_test_kit.interpolators.shell_interpolator import ShellInterpolator
+
+client = Client(location="EU")
+bqtk_conf = BQTestKitConfig().with_test_context("basic")
+bqtk = BQTestKit(bq_client=client, bqtk_config=bqtk_conf)
+data_literals_dict = JsonDataLiteralTransformer().load_as({
+    "TABLE_FOO": (['{"foobar": "1", "foo": 1, "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC"}'], [SchemaField("foobar", "STRING"), SchemaField("foo", "INT64"), SchemaField("_PARTITIONTIME", "TIMESTAMP")]),
+    "TABLE_BAR": (['{"foobar": "1", "bar": 2}'], [SchemaField("foobar", "STRING"), SchemaField("bar", "INT64")]),
+    "TABLE_EMPTY": (None, [SchemaField("foobar", "STRING"), SchemaField("baz", "INT64")])
+})
+results = bqtk.query_template(from_="""
+    SELECT
+        f.foo, b.bar, e.baz, f._partitiontime as pt
+    FROM
+        ${TABLE_FOO} f
+        INNER JOIN ${TABLE_BAR} b ON f.foobar = b.foobar
+        LEFT JOIN ${TABLE_EMPTY} e ON b.foobar = e.foobar
+""").update_global_dict(data_literals_dict).add_interpolator(ShellInterpolator()).run()
+assert len(results.rows) == 1
+assert results.rows == [{"foo": 1, "bar": 2, "baz": None, "pt": datetime(2020, 11, 26, 17, 9, 3, 967259, pytz.UTC)}]
+```
+
 More usage can be found in [it tests](https://github.com/tiboun/python-bq-test-kit/tree/main/tests/it).
 
 Concepts
@@ -160,6 +197,25 @@ Data loaders were restricted to those because they can be easily modified by a h
 If you need to support more, you can still load data by instantiating
 *bq_test_kit.bq_dsl.bq_resources.data_loaders.base_data_loader.BaseDataLoader*.
 
+
+Data Literal Transformers
+-------------------------
+
+Supported data literal transformers are csv and json.
+Data Literal Transformers can be less strict than their counter part, Data Loaders.
+In fact, they allow to use cast technique to transform string to bytes or cast a date like to its target type.
+Furthermore, in json, another format is allowed, JSON_ARRAY.
+This allows to have a better maintainability of the test resources.
+
+Data Literal Transformers allows you to specify _partitiontime or _partitiondate as well,
+thus you can specify all your data in one file and still matching the native table behavior.
+If you were using Data Loader to load into an ingestion time partitioned table,
+you would have to load data into specific partition.
+Loading into a specific partition make the time rounded to 00:00:00.
+
+If you need to support a custom format, you may extend BaseDataLiteralTransformer
+to benefit from the implemented data literal conversion.
+*bq_test_kit.data_literal_transformers.base_data_literal_transformer.BaseDataLiteralTransformer*.
 
 Resource strategies
 -------------------
