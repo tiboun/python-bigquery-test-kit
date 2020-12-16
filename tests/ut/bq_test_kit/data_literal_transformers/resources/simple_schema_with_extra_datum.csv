@@ -1,0 +1,2 @@
+"str with quote ' and backslash \\","YW55",1,1.5,true,"2020-11-26 17:09:03.967259 UTC","2020-11-26","11:09:03","2020-11-26 17:09:03",1.6,"POINT(-122.35 47.62)",,"This is not part of the schema"
+"other string","YW55",2,2.5,true,"2020-11-26 17:09:03.967259 UTC","2020-11-26","11:09:03","2020-11-26 17:09:03",2.6,"POINT(-122.50 -40.6)",,"This is really not part of the schema"

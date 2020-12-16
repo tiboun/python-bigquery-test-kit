@@ -4,6 +4,7 @@
 # https://opensource.org/licenses/MIT
 
 import pytest
+from google.cloud.bigquery.schema import SchemaField
 
 from bq_test_kit.data_literal_transformers.base_data_literal_transformer import \
     BaseDataLiteralTransformer
@@ -12,6 +13,4 @@ from bq_test_kit.data_literal_transformers.base_data_literal_transformer import 
 def test_load_implementation():
     bdlt = BaseDataLiteralTransformer()
     with pytest.raises(NotImplementedError):
-        bdlt.load(None, None)
-    with pytest.raises(NotImplementedError):
-        bdlt.load_as(None)
+        bdlt.load(1, [SchemaField("titi", "STRING")])
