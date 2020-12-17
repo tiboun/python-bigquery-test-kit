@@ -122,7 +122,7 @@ def test_query_with_interpolators(bqtk: BQTestKit):
     assert len(result.rows) == 1
     assert result.rows[0]["nb"] == 2
     result = bqtk.query_template(from_="select {{NB_USER}} as nb") \
-                 .with_interpators([JinjaInterpolator({"NB_USER": "3"})]) \
+                 .with_interpolators([JinjaInterpolator({"NB_USER": "3"})]) \
                  .run()
     assert len(result.rows) == 1
     assert result.rows[0]["nb"] == 3
@@ -131,7 +131,7 @@ def test_query_with_interpolators(bqtk: BQTestKit):
         def get_nb_user(self):
             return 4
     result = bqtk.query_template(from_="select {{container.get_nb_user()}} as nb") \
-                 .with_interpators([JinjaInterpolator({"container": DummyContainer()})]) \
+                 .with_interpolators([JinjaInterpolator({"container": DummyContainer()})]) \
                  .run()
     assert len(result.rows) == 1
     assert result.rows[0]["nb"] == 4

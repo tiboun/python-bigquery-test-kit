@@ -207,7 +207,7 @@ class BQQueryTemplate():
         query_template.job_config.write_disposition = WriteDisposition.WRITE_EMPTY
         return query_template
 
-    def with_interpators(self, renderers: List[BaseInterpolator]):
+    def with_interpolators(self, renderers: List[BaseInterpolator]):
         """Interpolators used in order to interpolate query template before its execution.
 
         Args:

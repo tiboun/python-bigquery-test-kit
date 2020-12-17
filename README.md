@@ -175,14 +175,14 @@ bqtk_conf = BQTestKitConfig().with_test_context("basic")
 bqtk = BQTestKit(bq_client=client, bqtk_config=bqtk_conf)
 
 result = bqtk.query_template(from_="select ${NB_USER} as nb") \
-             .with_global_dict({"NB_USER": "2"}) \
-             .add_renderer(ShellInterpolator()) \
-             .run()
+            .with_global_dict({"NB_USER": "2"}) \
+            .add_interpolator(ShellInterpolator()) \
+            .run()
 assert len(result.rows) == 1
 assert result.rows[0]["nb"] == 2
 result = bqtk.query_template(from_="select {{NB_USER}} as nb") \
-             .with_renderers([JinjaInterpolator({"NB_USER": "3"})]) \
-             .run()
+            .with_interpolators([JinjaInterpolator({"NB_USER": "3"})]) \
+            .run()
 assert len(result.rows) == 1
 assert result.rows[0]["nb"] == 3
 ```
