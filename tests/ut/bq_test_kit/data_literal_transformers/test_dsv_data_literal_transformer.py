@@ -5,8 +5,7 @@
 
 import pytest
 
-from bq_test_kit.data_literal_transformers.dsv_data_literal_transformer import \
-    DsvDataLiteralTransformer
+from bq_test_kit.data_literal_transformers import DsvDataLiteralTransformer
 from bq_test_kit.exceptions import (DataLiteralTransformException,
                                     InvalidInstanceException)
 from bq_test_kit.resource_loaders.package_file_loader import PackageFileLoader

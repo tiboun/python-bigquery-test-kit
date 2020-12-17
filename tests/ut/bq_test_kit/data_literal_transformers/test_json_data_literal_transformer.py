@@ -5,8 +5,7 @@
 
 import pytest
 
-from bq_test_kit.data_literal_transformers.json_data_literal_transformer import \
-    JsonDataLiteralTransformer
+from bq_test_kit.data_literal_transformers import JsonDataLiteralTransformer
 from bq_test_kit.data_literal_transformers.json_format import JsonFormat
 from bq_test_kit.exceptions import (DataLiteralTransformException,
                                     InvalidInstanceException,

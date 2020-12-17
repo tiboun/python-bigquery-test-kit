@@ -6,8 +6,7 @@
 import pytest
 from google.cloud.bigquery.schema import SchemaField
 
-from bq_test_kit.data_literal_transformers.base_data_literal_transformer import \
-    BaseDataLiteralTransformer
+from bq_test_kit.data_literal_transformers import BaseDataLiteralTransformer
 
 
 def test_load_implementation():
