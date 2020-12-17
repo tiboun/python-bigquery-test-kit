@@ -5,8 +5,7 @@
 
 from bq_test_kit import BQTestKit
 from bq_test_kit.bq_dsl.schema_mixin import SchemaMixin
-from bq_test_kit.data_literal_transformers.json_data_literal_transformer import \
-    JsonDataLiteralTransformer
+from bq_test_kit.data_literal_transformers import JsonDataLiteralTransformer
 from bq_test_kit.resource_loaders.package_file_loader import PackageFileLoader
 
 
