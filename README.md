@@ -281,6 +281,17 @@ Windows
 Changelog
 =========
 
+0.3.1
+-----
+
+ - change method typo of with_interpolators
+ - fix README.md related to interpolators
+
+0.3.0
+-----
+
+ - add data literal transformer package exports
+
 0.2.0
 -----
 

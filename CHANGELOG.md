@@ -1,3 +1,9 @@
+## v0.3.1 (2020-12-17)
+
+### Fix
+
+- change method typo of with_interpolators
+
 ## v0.3.0 (2020-12-17)
 
 ### Refactor
