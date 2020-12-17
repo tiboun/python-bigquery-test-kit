@@ -119,7 +119,7 @@ def test_change_interpolators():
     assert len(bq_tpl.interpolators) == 1
     bq_tpl = bq_tpl.add_interpolator(DummyInterpolator())
     assert len(bq_tpl.interpolators) == 2
-    bq_tpl = bq_tpl.with_interpators([DummyInterpolator()])
+    bq_tpl = bq_tpl.with_interpolators([DummyInterpolator()])
     assert len(bq_tpl.interpolators) == 1
 
 
