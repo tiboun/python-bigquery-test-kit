@@ -1,3 +1,9 @@
+## v0.4.1 (2021-01-26)
+
+### Fix
+
+- fix empty array data literal
+
 ## v0.4.0 (2021-01-26)
 
 ### Fix
