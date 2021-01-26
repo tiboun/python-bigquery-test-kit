@@ -211,11 +211,11 @@ class BaseDataLiteralTransformer(SchemaMixin):
                     nested_result = None
                     if str.upper(schema_field.field_type) == "RECORD":
                         nested_result = [_transform_struct_to_literal(element, schema_field.fields,
-                                                                    f"{parent_path}.{schema_field.name}[{i}]", None)
+                                                                      f"{parent_path}.{schema_field.name}[{i}]", None)
                                          for i, element in enumerate(data_element[schema_field.name])]
                     else:
                         nested_result = [_transform_field_to_literal(element, schema_field,
-                                                                    f"{parent_path}.{schema_field.name}[{i}]")
+                                                                     f"{parent_path}.{schema_field.name}[{i}]")
                                          for i, element in enumerate(data_element[schema_field.name])]
                     nested_errors = [nested_error
                                      for _, nested_errors in nested_result if nested_errors
