@@ -444,3 +444,35 @@ def test_json_load_as_simple_schema():
                     "cast(null as GEOGRAPHY) as f_geography, "
                     "cast(null as STRUCT<f_datetime DATETIME>) as f_struct)")
     }
+
+
+def test_json_empty_array_schema():
+    expected = ("(select struct(cast(null as STRING) as f_string, "
+                "cast([] as ARRAY<STRUCT<f_string STRING, f_bytes BYTES, f_int INT64, f_float FLOAT64, "
+                "f_bool BOOLEAN, f_timestamp TIMESTAMP, f_date DATE, f_time TIME, f_datetime DATETIME, "
+                "f_numeric NUMERIC, f_geography GEOGRAPHY>>) as f_repeated_struct, "
+                "cast([] as ARRAY<STRING>) as f_string_repeated, cast([] as ARRAY<BYTES>) as f_bytes_repeated, "
+                "cast([] as ARRAY<INT64>) as f_int_repeated, "
+                "cast([] as ARRAY<FLOAT64>) as f_float_repeated, cast([] as ARRAY<BOOLEAN>) as f_bool_repeated, "
+                "cast([] as ARRAY<TIMESTAMP>) as f_timestamp_repeated, cast([] as ARRAY<DATE>) as f_date_repeated, "
+                "cast([] as ARRAY<TIME>) as f_time_repeated, cast([] as ARRAY<DATETIME>) as f_datetime_repeated, "
+                "cast([] as ARRAY<NUMERIC>) as f_numeric_repeated, "
+                "cast([] as ARRAY<GEOGRAPHY>) as f_geography_repeated) as f_struct, "
+                "cast([] as ARRAY<STRUCT<f_string STRING, f_bytes BYTES, f_int INT64, f_float FLOAT64, "
+                "f_bool BOOLEAN, f_timestamp TIMESTAMP, f_date DATE, f_time TIME, f_datetime DATETIME, "
+                "f_numeric NUMERIC, f_geography GEOGRAPHY>>) as f_repeated_struct, "
+                "cast([] as ARRAY<STRING>) as f_string_repeated, "
+                "cast([] as ARRAY<BYTES>) as f_bytes_repeated, cast([] as ARRAY<INT64>) as f_int_repeated, "
+                "cast([] as ARRAY<FLOAT64>) as f_float_repeated, "
+                "cast([] as ARRAY<BOOLEAN>) as f_bool_repeated, "
+                "cast([] as ARRAY<TIMESTAMP>) as f_timestamp_repeated, "
+                "cast([] as ARRAY<DATE>) as f_date_repeated, "
+                "cast([] as ARRAY<TIME>) as f_time_repeated, "
+                "cast([] as ARRAY<DATETIME>) as f_datetime_repeated, "
+                "cast([] as ARRAY<NUMERIC>) as f_numeric_repeated, cast([] as ARRAY<GEOGRAPHY>) "
+                "as f_geography_repeated)")
+    query = JsonDataLiteralTransformer(json_format=JsonFormat.JSON_ARRAY).load(
+        PackageFileLoader("tests/ut/bq_test_kit/data_literal_transformers/resources/empty_array_schema_datum.json"),
+        PackageFileLoader("tests/ut/bq_test_kit/data_literal_transformers/resources/empty_array_schema.json")
+    )
+    assert query == expected
