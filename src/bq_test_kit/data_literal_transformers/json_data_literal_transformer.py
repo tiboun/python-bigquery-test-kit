@@ -76,7 +76,9 @@ class JsonDataLiteralTransformer(BaseDataLiteralTransformer):
             json_lines = self._load_json_array(datum)
         else:
             json_lines = self._load_json_lines(datum)
-        return self._to_data_literal(json_lines, schema_fields, transform_field_name)
+        if json_lines:
+            return self._to_data_literal(json_lines, schema_fields, transform_field_name)
+        return self._empty_literal(schema_fields, transform_field_name)
 
     @staticmethod
     def _load_json_array(datum: Union[BaseResourceLoader, str]) -> List[Any]:

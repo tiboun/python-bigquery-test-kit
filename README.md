@@ -326,8 +326,8 @@ Changelog
 
 0.4.0
 -----
- - add ability to inject data into query template from DSL
- - add ability to rely on temp tables
+ - add ability to rely on temp tables or data literals with query template DSL
+ - fix generate empty data literal when json array is empty
 
 0.3.1
 -----
