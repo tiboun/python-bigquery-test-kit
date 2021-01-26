@@ -9,3 +9,4 @@ isort
 setuptools-scm
 twine
 pylint
+pyyaml

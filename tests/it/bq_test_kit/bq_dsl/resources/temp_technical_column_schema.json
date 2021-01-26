@@ -1,0 +1,203 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "_BQTK_PARTITIONTIME",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_BQTK_PARTITIONDATE",
+    "type": "DATE"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_BQTK_PARTITIONSTRING",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_BQTK_TABLE_STRING",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_BQTK_FILE_STRING",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_BQTK_ROW_TIMESTAMP",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_BQTK_PARTITIONSTRUCT",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_PARTITIONTIME",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_PARTITIONDATE",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_PARTITIONSTRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_TABLE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_FILE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_ROW_TIMESTAMP",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_BQTK_PARTITIONSTRUCTR",
+        "type": "RECORD",
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "_BQTK_PARTITIONTIME",
+            "type": "TIMESTAMP"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_BQTK_PARTITIONDATE",
+            "type": "DATE"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_BQTK_PARTITIONSTRING",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_BQTK_TABLE_STRING",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_BQTK_FILE_STRING",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_BQTK_ROW_TIMESTAMP",
+            "type": "TIMESTAMP"
+          }
+        ]
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_BQTK_PARTITIONTIMER",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_BQTK_PARTITIONDATER",
+        "type": "DATE"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_BQTK_PARTITIONSTRINGR",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_BQTK_TABLE_STRINGR",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_BQTK_FILE_STRINGR",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_BQTK_ROW_TIMESTAMPR",
+        "type": "TIMESTAMP"
+      }
+    ]
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_BQTK_PARTITIONSTRUCTR",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_PARTITIONTIME",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_PARTITIONDATE",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_PARTITIONSTRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_TABLE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_FILE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_BQTK_ROW_TIMESTAMP",
+        "type": "TIMESTAMP"
+      }
+    ]
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_BQTK_PARTITIONTIMER",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_BQTK_PARTITIONDATER",
+    "type": "DATE"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_BQTK_PARTITIONSTRINGR",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_BQTK_TABLE_STRINGR",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_BQTK_FILE_STRINGR",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_BQTK_ROW_TIMESTAMPR",
+    "type": "TIMESTAMP"
+  }
+]

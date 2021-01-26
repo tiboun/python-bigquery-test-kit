@@ -9,7 +9,7 @@
 import json
 from copy import deepcopy
 from json.decoder import JSONDecodeError
-from typing import Any, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union
 
 from google.cloud.bigquery.schema import SchemaField
 from logzero import logger
@@ -48,7 +48,8 @@ class JsonDataLiteralTransformer(BaseDataLiteralTransformer):
         return new_jdlt
 
     def _load(self, datum: Union[BaseResourceLoader, str, List[str]],
-              schema_fields: List[SchemaField]) -> str:
+              schema_fields: List[SchemaField],
+              transform_field_name: Optional[Callable[[str], str]]) -> str:
         """
             Load a json inputs and transform them as data literal, preserving target schema with a fullfilled line.
             This fullfilled line is, of course, discarded from the literal datum.
@@ -75,7 +76,7 @@ class JsonDataLiteralTransformer(BaseDataLiteralTransformer):
             json_lines = self._load_json_array(datum)
         else:
             json_lines = self._load_json_lines(datum)
-        return self._to_data_literal(json_lines, schema_fields)
+        return self._to_data_literal(json_lines, schema_fields, transform_field_name)
 
     @staticmethod
     def _load_json_array(datum: Union[BaseResourceLoader, str]) -> List[Any]:

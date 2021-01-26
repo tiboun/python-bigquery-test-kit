@@ -6,6 +6,7 @@
 # C0114 disabled because this module contains only export
 # pylint: disable=C0114
 
+from bq_test_kit.bq_dsl.bq_query_datum import BQQueryDatum
 from bq_test_kit.bq_dsl.bq_query_template import BQQueryTemplate
 from bq_test_kit.bq_dsl.bq_resources import (BaseBQResource, Dataset, Project,
                                              Table)
@@ -15,5 +16,6 @@ __all__ = [
     "Table",
     "Project",
     "BQQueryTemplate",
+    "BQQueryDatum",
     "BaseBQResource"
 ]
