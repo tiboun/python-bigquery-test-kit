@@ -287,39 +287,49 @@ def test_json_complex_schema():
 
 
 def test_json_empty_complex_schema():
-    transformer = JsonDataLiteralTransformer()
-    query = transformer.load(
+    expected = ("(select * from (select cast(null as STRING) as f_string, cast(null as BYTES) as f_bytes, "
+                "cast(null as INT64) as f_int, cast(null as FLOAT64) as f_float, cast(null as BOOLEAN) as f_bool,"
+                " cast(null as TIMESTAMP) as f_timestamp, cast(null as DATE) as f_date, "
+                "cast(null as TIME) as f_time, cast(null as DATETIME) as f_datetime, "
+                "cast(null as NUMERIC) as f_numeric, cast(null as GEOGRAPHY) as f_geography, "
+                "cast(null as STRUCT<f_string STRING, f_bytes BYTES, f_int INT64, f_float FLOAT64, "
+                "f_bool BOOLEAN, f_timestamp TIMESTAMP, f_date DATE, f_time TIME, f_datetime DATETIME, "
+                "f_numeric NUMERIC, f_geography GEOGRAPHY, f_repeated_struct ARRAY<STRUCT<f_string STRING, "
+                "f_bytes BYTES, f_int INT64, f_float FLOAT64, f_bool BOOLEAN, f_timestamp TIMESTAMP, "
+                "f_date DATE, f_time TIME, f_datetime DATETIME, f_numeric NUMERIC, f_geography GEOGRAPHY>>, "
+                "f_string_repeated ARRAY<STRING>, f_bytes_repeated ARRAY<BYTES>, f_int_repeated ARRAY<INT64>, "
+                "f_float_repeated ARRAY<FLOAT64>, f_bool_repeated ARRAY<BOOLEAN>, "
+                "f_timestamp_repeated ARRAY<TIMESTAMP>, f_date_repeated ARRAY<DATE>, "
+                "f_time_repeated ARRAY<TIME>, f_datetime_repeated ARRAY<DATETIME>, "
+                "f_numeric_repeated ARRAY<NUMERIC>, f_geography_repeated ARRAY<GEOGRAPHY>>) as f_struct, "
+                "cast(null as ARRAY<STRUCT<f_string STRING, f_bytes BYTES, f_int INT64, f_float FLOAT64, "
+                "f_bool BOOLEAN, f_timestamp TIMESTAMP, f_date DATE, f_time TIME, f_datetime DATETIME, "
+                "f_numeric NUMERIC, f_geography GEOGRAPHY>>) as f_repeated_struct, "
+                "cast(null as ARRAY<STRING>) as f_string_repeated, "
+                "cast(null as ARRAY<BYTES>) as f_bytes_repeated, cast(null as ARRAY<INT64>) as f_int_repeated, "
+                "cast(null as ARRAY<FLOAT64>) as f_float_repeated, "
+                "cast(null as ARRAY<BOOLEAN>) as f_bool_repeated, "
+                "cast(null as ARRAY<TIMESTAMP>) as f_timestamp_repeated, "
+                "cast(null as ARRAY<DATE>) as f_date_repeated, "
+                "cast(null as ARRAY<TIME>) as f_time_repeated, "
+                "cast(null as ARRAY<DATETIME>) as f_datetime_repeated, "
+                "cast(null as ARRAY<NUMERIC>) as f_numeric_repeated, cast(null as ARRAY<GEOGRAPHY>) "
+                "as f_geography_repeated) limit 0)")
+    query = JsonDataLiteralTransformer().load(
         None,
         PackageFileLoader("tests/ut/bq_test_kit/data_literal_transformers/resources/complex_schema.json")
     )
-    assert query == ("(select * from (select cast(null as STRING) as f_string, cast(null as BYTES) as f_bytes, "
-                     "cast(null as INT64) as f_int, cast(null as FLOAT64) as f_float, cast(null as BOOLEAN) as f_bool,"
-                     " cast(null as TIMESTAMP) as f_timestamp, cast(null as DATE) as f_date, "
-                     "cast(null as TIME) as f_time, cast(null as DATETIME) as f_datetime, "
-                     "cast(null as NUMERIC) as f_numeric, cast(null as GEOGRAPHY) as f_geography, "
-                     "cast(null as STRUCT<f_string STRING, f_bytes BYTES, f_int INT64, f_float FLOAT64, "
-                     "f_bool BOOLEAN, f_timestamp TIMESTAMP, f_date DATE, f_time TIME, f_datetime DATETIME, "
-                     "f_numeric NUMERIC, f_geography GEOGRAPHY, f_repeated_struct ARRAY<STRUCT<f_string STRING, "
-                     "f_bytes BYTES, f_int INT64, f_float FLOAT64, f_bool BOOLEAN, f_timestamp TIMESTAMP, "
-                     "f_date DATE, f_time TIME, f_datetime DATETIME, f_numeric NUMERIC, f_geography GEOGRAPHY>>, "
-                     "f_string_repeated ARRAY<STRING>, f_bytes_repeated ARRAY<BYTES>, f_int_repeated ARRAY<INT64>, "
-                     "f_float_repeated ARRAY<FLOAT64>, f_bool_repeated ARRAY<BOOLEAN>, "
-                     "f_timestamp_repeated ARRAY<TIMESTAMP>, f_date_repeated ARRAY<DATE>, "
-                     "f_time_repeated ARRAY<TIME>, f_datetime_repeated ARRAY<DATETIME>, "
-                     "f_numeric_repeated ARRAY<NUMERIC>, f_geography_repeated ARRAY<GEOGRAPHY>>) as f_struct, "
-                     "cast(null as ARRAY<STRUCT<f_string STRING, f_bytes BYTES, f_int INT64, f_float FLOAT64, "
-                     "f_bool BOOLEAN, f_timestamp TIMESTAMP, f_date DATE, f_time TIME, f_datetime DATETIME, "
-                     "f_numeric NUMERIC, f_geography GEOGRAPHY>>) as f_repeated_struct, "
-                     "cast(null as ARRAY<STRING>) as f_string_repeated, "
-                     "cast(null as ARRAY<BYTES>) as f_bytes_repeated, cast(null as ARRAY<INT64>) as f_int_repeated, "
-                     "cast(null as ARRAY<FLOAT64>) as f_float_repeated, "
-                     "cast(null as ARRAY<BOOLEAN>) as f_bool_repeated, "
-                     "cast(null as ARRAY<TIMESTAMP>) as f_timestamp_repeated, "
-                     "cast(null as ARRAY<DATE>) as f_date_repeated, "
-                     "cast(null as ARRAY<TIME>) as f_time_repeated, "
-                     "cast(null as ARRAY<DATETIME>) as f_datetime_repeated, "
-                     "cast(null as ARRAY<NUMERIC>) as f_numeric_repeated, cast(null as ARRAY<GEOGRAPHY>) "
-                     "as f_geography_repeated) limit 0)")
+    assert query == expected
+    query = JsonDataLiteralTransformer(json_format=JsonFormat.JSON_ARRAY).load(
+        "[]",
+        PackageFileLoader("tests/ut/bq_test_kit/data_literal_transformers/resources/complex_schema.json")
+    )
+    assert query == expected
+    query = JsonDataLiteralTransformer().load(
+        [],
+        PackageFileLoader("tests/ut/bq_test_kit/data_literal_transformers/resources/complex_schema.json")
+    )
+    assert query == expected
 
 
 def test_required_schema():
