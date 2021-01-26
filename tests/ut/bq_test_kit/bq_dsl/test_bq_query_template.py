@@ -11,6 +11,8 @@ from google.cloud.bigquery.query import ScalarQueryParameter, UDFResource
 from bq_test_kit.bq_dsl import BQQueryTemplate, Dataset, Project, Table
 from bq_test_kit.bq_test_kit_config import BQTestKitConfig
 from bq_test_kit.constants import DEFAULT_LOCATION
+from bq_test_kit.data_literal_transformers.json_data_literal_transformer import \
+    JsonDataLiteralTransformer
 from bq_test_kit.interpolators.base_interpolator import BaseInterpolator
 from bq_test_kit.resource_loaders import PackageFileLoader
 
@@ -127,7 +129,7 @@ def test_render():
     pfl = PackageFileLoader("tests/ut/bq_test_kit/bq_dsl/resources/dummy_query.sql")
     conf = BQTestKitConfig({DEFAULT_LOCATION: "EU"})
     bq_tpl = BQQueryTemplate(from_=pfl, bqtk_config=conf, bq_client=None, interpolators=[DummyInterpolator()])
-    assert bq_tpl._interpolate() == "rendered_select * from my_table\n"
+    assert bq_tpl._interpolate({}) == "rendered_select * from my_table\n"
 
 
 def test_global_dict():
@@ -157,3 +159,14 @@ def test_global_dict():
                                     "table_foobar": table_with_alias.fqdn(),
                                     "new_complex_key": {"new_key": "new_value"}
                                  }
+
+
+def test_temp_tables():
+    pfl = PackageFileLoader("tests/ut/bq_test_kit/bq_dsl/resources/dummy_query.sql")
+    conf = BQTestKitConfig({DEFAULT_LOCATION: "EU"})
+    bq_tpl = BQQueryTemplate(from_=pfl, bqtk_config=conf, bq_client=None, interpolators=[DummyInterpolator()])
+    temp_table_input = (JsonDataLiteralTransformer(), {
+        "t1": ("{}", [])
+    })
+    bq_tpl = bq_tpl.with_temp_tables(temp_table_input)
+    assert bq_tpl.temp_tables == [temp_table_input]

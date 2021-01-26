@@ -8,14 +8,20 @@ from decimal import Decimal
 
 import pytest
 import pytz
+from google.api_core.exceptions import BadRequest
 from google.cloud.bigquery.query import ScalarQueryParameter
 from google.cloud.bigquery.schema import SchemaField
 from google.cloud.bigquery.table import Row
 
 from bq_test_kit.bq_dsl.bq_resources.partitions import IngestionTime
+from bq_test_kit.bq_dsl.schema_mixin import SchemaMixin
 from bq_test_kit.bq_test_kit import BQTestKit
+from bq_test_kit.data_literal_transformers.json_data_literal_transformer import \
+    JsonDataLiteralTransformer
+from bq_test_kit.data_literal_transformers.json_format import JsonFormat
 from bq_test_kit.interpolators.jinja_interpolator import JinjaInterpolator
 from bq_test_kit.interpolators.shell_interpolator import ShellInterpolator
+from bq_test_kit.resource_loaders.package_file_loader import PackageFileLoader
 
 
 def test_simple_query(bqtk: BQTestKit):
@@ -186,3 +192,116 @@ def test_query_all_bq_types(bqtk: BQTestKit):
         },
         "f_array": ["C5wmJdwh7wX2rU3fR8XyA4N6oyw="]
     }]
+
+
+def test_complex_temp_tables(bqtk: BQTestKit):
+    complex_schema = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/"
+                                       "complex_schema.json")
+    complex_datum = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/complex_schema_datum.json")
+    transformer = JsonDataLiteralTransformer()
+    result = bqtk.query_template(from_="select * from complex_table") \
+                 .with_temp_tables((transformer, {
+                     "complex_table": (complex_datum, complex_schema)
+                  })) \
+                 .run()
+
+    assert len(result.rows) == 1
+    assert result.schema == SchemaMixin().to_schema_field_list(complex_schema)
+
+
+def test_rewrite_technical_column(bqtk: BQTestKit):
+    complex_schema = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/"
+                                       "technical_column_schema.json")
+    temp_complex_schema = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/"
+                                            "temp_technical_column_schema.json")
+    complex_datum = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/technical_column_schema_datum.json")
+    transformer = JsonDataLiteralTransformer(json_format=JsonFormat.JSON_ARRAY)
+    result = bqtk.query_template(from_="select * \nfrom technical_column_table;\n") \
+                 .with_temp_tables((transformer, {
+                     "technical_column_table": (complex_datum, complex_schema)
+                  })) \
+                 .add_interpolator(JinjaInterpolator()) \
+                 .run()
+    assert len(result.rows) == 1
+    assert result.schema == SchemaMixin().to_schema_field_list(temp_complex_schema)
+    result = bqtk.query_template(from_="select count(*) \nfrom {{technical_column_table}};\n") \
+                 .with_temp_tables((transformer, {
+                     "technical_column_table": (complex_datum, complex_schema)
+                  })) \
+                 .add_interpolator(JinjaInterpolator()) \
+                 .run()
+    assert len(result.rows) == 1
+
+
+def test_technical_column_with_datum_temp_table(bqtk: BQTestKit):
+    complex_schema = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/"
+                                       "technical_column_schema.json")
+    temp_complex_schema = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/"
+                                            "temp_technical_column_schema.json")
+    complex_datum = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/technical_column_schema_datum.json")
+    transformer = JsonDataLiteralTransformer(json_format=JsonFormat.JSON_ARRAY)
+    result = bqtk.query_template(from_="select * \nfrom technical_column_table;\n") \
+                 .with_datum({
+                     "technical_column_table": (complex_datum, complex_schema)
+                  }) \
+                 .loaded_with(transformer) \
+                 .add_interpolator(JinjaInterpolator()) \
+                 .run()
+    assert len(result.rows) == 1
+    assert result.schema == SchemaMixin().to_schema_field_list(temp_complex_schema)
+    result = bqtk.query_template(from_="select count(*) \nfrom {{technical_column_table}};\n") \
+                 .with_datum({
+                     "technical_column_table": (complex_datum, complex_schema)
+                  }) \
+                 .loaded_with(transformer) \
+                 .add_interpolator(JinjaInterpolator()) \
+                 .run()
+    assert len(result.rows) == 1
+
+
+def test_technical_column_with_datum_literal(bqtk: BQTestKit):
+    complex_schema = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/"
+                                       "technical_column_schema.json")
+    complex_datum = PackageFileLoader("tests/it/bq_test_kit/bq_dsl/resources/technical_column_schema_datum.json")
+    transformer = JsonDataLiteralTransformer(json_format=JsonFormat.JSON_ARRAY)
+    with pytest.raises(BadRequest):
+        bqtk.query_template(from_="select * \nfrom technical_column_table;\n") \
+            .with_datum({
+                "technical_column_table": (complex_datum, complex_schema)
+            }) \
+            .as_data_literals() \
+            .loaded_with(transformer) \
+            .add_interpolator(JinjaInterpolator()) \
+            .run()
+    result = bqtk.query_template(from_="select count(*) \nfrom {{technical_column_table}};\n") \
+                 .with_datum({
+                     "technical_column_table": (complex_datum, complex_schema)
+                  }) \
+                 .as_data_literals() \
+                 .loaded_with(transformer) \
+                 .add_interpolator(JinjaInterpolator()) \
+                 .run()
+    assert len(result.rows) == 1
+
+
+def test_technical_column_with_multiple_temp_table(bqtk: BQTestKit):
+    results = bqtk.query_template(from_="""
+        SELECT
+            f.foo, b.bar, e.baz, f._partitiontime as pt
+        FROM
+            ${TABLE_FOO} f
+            INNER JOIN ${TABLE_BAR} b ON f.foobar = b.foobar
+            LEFT JOIN ${TABLE_EMPTY} e ON b.foobar = e.foobar
+    """).with_datum({
+        "TABLE_FOO": (['{"foobar": "1", "foo": 1, "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC"}'],
+                      [SchemaField("foobar", "STRING"), SchemaField("foo", "INT64"),
+                       SchemaField("_PARTITIONTIME", "TIMESTAMP")]),
+        "TABLE_BAR": (['{"foobar": "1", "bar": 2}'], [SchemaField("foobar", "STRING"), SchemaField("bar", "INT64")]),
+        "TABLE_EMPTY": (None, [SchemaField("foobar", "STRING"), SchemaField("baz", "INT64")])
+        }) \
+        .loaded_with(JsonDataLiteralTransformer()) \
+        .add_interpolator(ShellInterpolator()) \
+        .run()
+    assert len(results.rows) == 1
+    expected = [{"foo": 1, "bar": 2, "baz": None, "pt": datetime(2020, 11, 26, 17, 9, 3, 967259, pytz.UTC)}]
+    assert results.rows == expected

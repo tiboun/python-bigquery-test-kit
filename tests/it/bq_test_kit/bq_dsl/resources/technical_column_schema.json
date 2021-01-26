@@ -1,0 +1,203 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "_PARTITIONTIME",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_PARTITIONDATE",
+    "type": "DATE"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_PARTITIONSTRING",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_TABLE_STRING",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_FILE_STRING",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_ROW_TIMESTAMP",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "_PARTITIONSTRUCT",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "_PARTITIONTIME",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_PARTITIONDATE",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_PARTITIONSTRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_TABLE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_FILE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_ROW_TIMESTAMP",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_PARTITIONSTRUCTR",
+        "type": "RECORD",
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "_PARTITIONTIME",
+            "type": "TIMESTAMP"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_PARTITIONDATE",
+            "type": "DATE"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_PARTITIONSTRING",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_TABLE_STRING",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_FILE_STRING",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "_ROW_TIMESTAMP",
+            "type": "TIMESTAMP"
+          }
+        ]
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_PARTITIONTIMER",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_PARTITIONDATER",
+        "type": "DATE"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_PARTITIONSTRINGR",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_TABLE_STRINGR",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_FILE_STRINGR",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "_ROW_TIMESTAMPR",
+        "type": "TIMESTAMP"
+      }
+    ]
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_PARTITIONSTRUCTR",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "_PARTITIONTIME",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_PARTITIONDATE",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_PARTITIONSTRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_TABLE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_FILE_STRING",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "_ROW_TIMESTAMP",
+        "type": "TIMESTAMP"
+      }
+    ]
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_PARTITIONTIMER",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_PARTITIONDATER",
+    "type": "DATE"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_PARTITIONSTRINGR",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_TABLE_STRINGR",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_FILE_STRINGR",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "_ROW_TIMESTAMPR",
+    "type": "TIMESTAMP"
+  }
+]

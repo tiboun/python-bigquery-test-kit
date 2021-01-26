@@ -117,28 +117,3 @@ def test_json_error_if_exists_in_partition(bqtk: BQTestKit):
             t.json_loader(from_=pfl).to_partition("20201112").error_if_exists().load()
             with pytest.raises(Exception):
                 t.json_loader(from_=pfl).to_partition("20201112").error_if_exists().load()
-
-
-def test_it(bqtk: BQTestKit):
-    from google.cloud.bigquery.client import Client
-    from bq_test_kit.bq_test_kit import BQTestKit
-    from bq_test_kit.bq_test_kit_config import BQTestKitConfig
-    from bq_test_kit.resource_loaders.package_file_loader import PackageFileLoader
-    from bq_test_kit.interpolators.jinja_interpolator import JinjaInterpolator
-    from bq_test_kit.interpolators.shell_interpolator import ShellInterpolator
-
-    client = Client(location="EU")
-    bqtk_conf = BQTestKitConfig().with_test_context("basic")
-    bqtk = BQTestKit(bq_client=client, bqtk_config=bqtk_conf)
-
-    result = bqtk.query_template(from_="select ${NB_USER} as nb") \
-                .with_global_dict({"NB_USER": "2"}) \
-                .add_interpolator(ShellInterpolator()) \
-                .run()
-    assert len(result.rows) == 1
-    assert result.rows[0]["nb"] == 2
-    result = bqtk.query_template(from_="select {{NB_USER}} as nb") \
-                .with_interpolators([JinjaInterpolator({"NB_USER": "3"})]) \
-                .run()
-    assert len(result.rows) == 1
-    assert result.rows[0]["nb"] == 3

@@ -1,4 +1,6 @@
-[Big Query](https://cloud.google.com/bigquery) doesn't provide any locally runnabled server,
+# BQ-test-kit, a testing framework to be more confident in your BigQuery SQL
+
+[BigQuery](https://cloud.google.com/bigquery) doesn't provide any locally runnabled server,
 hence tests need to be run in Big Query itself.
 
 BQ-test-kit enables Big Query testing by providing you an almost immutable DSL that allows you to :
@@ -7,12 +9,15 @@ BQ-test-kit enables Big Query testing by providing you an almost immutable DSL t
  - create and delete table, partitioned or not
  - load csv or json data into tables
  - run query templates
- - transform json or csv data into a data literal
+ - transform json or csv data into a data literal or a temp table
 
 You can, therefore, test your query with data as literals or instantiate
 datasets and tables in projects and load data into them.
 
 It's faster to run query with data as literals but using materialized tables is mandatory for some use cases.
+In fact, data literal may add complexity to your request and therefore be rejected by BigQuery.
+In such a situation, temporary tables may come to the rescue as they don't rely on data loading but on data literals.
+Complexity will then almost be like you where looking into a real table.
 
 Immutability allows you to share datasets and tables definitions as a fixture and use it accros all tests,
 adapt the definitions as necessary without worrying about mutations.
@@ -31,8 +36,8 @@ In order to benefit from those interpolators, you will need to install one of th
 Usage
 =====
 
-Common
-------
+Common setup with materialized tables
+-------------------------------------
 
 ```python
 from google.cloud.bigquery.client import Client
@@ -64,8 +69,8 @@ with bqtk.project().dataset("my_dataset").isolate().clean_and_keep() as d:
 # dataset `GOOGLE_CLOUD_PROJECT.my_dataset_basic` is deleted
 ```
 
-Advanced
---------
+Advanced setup with materialized tables
+---------------------------------------
 
 ```python
 from google.cloud.bigquery.client import Client
@@ -100,11 +105,10 @@ with Tables.from_(p, p) as tables:
     assert table_barbar.show() is not None
 ```
 
-Simple query
---------
+Simple BigQuery SQL test with data literals
+-------------------------------------------
 
 ```python
-
 import pytz
 
 from datetime import datetime
@@ -118,11 +122,6 @@ from bq_test_kit.interpolators.shell_interpolator import ShellInterpolator
 client = Client(location="EU")
 bqtk_conf = BQTestKitConfig().with_test_context("basic")
 bqtk = BQTestKit(bq_client=client, bqtk_config=bqtk_conf)
-data_literals_dict = JsonDataLiteralTransformer().load_as({
-    "TABLE_FOO": (['{"foobar": "1", "foo": 1, "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC"}'], [SchemaField("foobar", "STRING"), SchemaField("foo", "INT64"), SchemaField("_PARTITIONTIME", "TIMESTAMP")]),
-    "TABLE_BAR": (['{"foobar": "1", "bar": 2}'], [SchemaField("foobar", "STRING"), SchemaField("bar", "INT64")]),
-    "TABLE_EMPTY": (None, [SchemaField("foobar", "STRING"), SchemaField("baz", "INT64")])
-})
 results = bqtk.query_template(from_="""
     SELECT
         f.foo, b.bar, e.baz, f._partitiontime as pt
@@ -130,7 +129,51 @@ results = bqtk.query_template(from_="""
         ${TABLE_FOO} f
         INNER JOIN ${TABLE_BAR} b ON f.foobar = b.foobar
         LEFT JOIN ${TABLE_EMPTY} e ON b.foobar = e.foobar
-""").update_global_dict(data_literals_dict).add_interpolator(ShellInterpolator()).run()
+""").with_datum({
+    "TABLE_FOO": (['{"foobar": "1", "foo": 1, "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC"}'], [SchemaField("foobar", "STRING"), SchemaField("foo", "INT64"), SchemaField("_PARTITIONTIME", "TIMESTAMP")]),
+    "TABLE_BAR": (['{"foobar": "1", "bar": 2}'], [SchemaField("foobar", "STRING"), SchemaField("bar", "INT64")]),
+    "TABLE_EMPTY": (None, [SchemaField("foobar", "STRING"), SchemaField("baz", "INT64")])
+    }) \
+    .as_data_literals() \
+    .loaded_with(JsonDataLiteralTransformer()) \
+    .add_interpolator(ShellInterpolator()) \
+    .run()
+assert len(results.rows) == 1
+assert results.rows == [{"foo": 1, "bar": 2, "baz": None, "pt": datetime(2020, 11, 26, 17, 9, 3, 967259, pytz.UTC)}]
+```
+
+Simple BigQuery SQL test with temp tables
+-----------------------------------------
+
+```python
+import pytz
+
+from datetime import datetime
+from google.cloud.bigquery.client import Client
+from google.cloud.bigquery.schema import SchemaField
+from bq_test_kit.bq_test_kit import BQTestKit
+from bq_test_kit.bq_test_kit_config import BQTestKitConfig
+from bq_test_kit.data_literal_transformers.json_data_literal_transformer import JsonDataLiteralTransformer
+from bq_test_kit.interpolators.shell_interpolator import ShellInterpolator
+
+client = Client(location="EU")
+bqtk_conf = BQTestKitConfig().with_test_context("basic")
+bqtk = BQTestKit(bq_client=client, bqtk_config=bqtk_conf)
+results = bqtk.query_template(from_="""
+    SELECT
+        f.foo, b.bar, e.baz, f._partitiontime as pt
+    FROM
+        ${TABLE_FOO} f
+        INNER JOIN ${TABLE_BAR} b ON f.foobar = b.foobar
+        LEFT JOIN ${TABLE_EMPTY} e ON b.foobar = e.foobar
+""").with_datum({
+    "TABLE_FOO": (['{"foobar": "1", "foo": 1, "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC"}'], [SchemaField("foobar", "STRING"), SchemaField("foo", "INT64"), SchemaField("_PARTITIONTIME", "TIMESTAMP")]),
+    "TABLE_BAR": (['{"foobar": "1", "bar": 2}'], [SchemaField("foobar", "STRING"), SchemaField("bar", "INT64")]),
+    "TABLE_EMPTY": (None, [SchemaField("foobar", "STRING"), SchemaField("baz", "INT64")])
+    }) \
+    .loaded_with(JsonDataLiteralTransformer()) \
+    .add_interpolator(ShellInterpolator()) \
+    .run()
 assert len(results.rows) == 1
 assert results.rows == [{"foo": 1, "bar": 2, "baz": None, "pt": datetime(2020, 11, 26, 17, 9, 3, 967259, pytz.UTC)}]
 ```
@@ -280,6 +323,11 @@ Windows
 
 Changelog
 =========
+
+0.4.0
+-----
+ - add ability to inject data into query template from DSL
+ - add ability to rely on temp tables
 
 0.3.1
 -----

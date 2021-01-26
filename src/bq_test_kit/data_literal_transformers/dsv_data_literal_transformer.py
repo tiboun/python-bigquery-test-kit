@@ -8,7 +8,7 @@
 
 import csv
 from copy import deepcopy
-from typing import List, Union
+from typing import Callable, List, Optional, Union
 
 from google.cloud.bigquery.schema import SchemaField
 
@@ -86,7 +86,8 @@ class DsvDataLiteralTransformer(BaseDataLiteralTransformer):
         return new_ddlt
 
     def _load(self, datum: Union[BaseResourceLoader, str, List[str]],
-              schema_fields: List[SchemaField]) -> str:
+              schema_fields: List[SchemaField],
+              transform_field_name: Optional[Callable[[str], str]]) -> str:
         """
             Load a dvs inputs and transform them as data literal, preserving target schema with a fullfilled line.
             This fullfilled line is, of course, discarded from the literal datum.
@@ -122,5 +123,5 @@ class DsvDataLiteralTransformer(BaseDataLiteralTransformer):
                 strict=True,
                 restkey="__extra-columns__"
             )
-            return self._to_data_literal(rows, schema_fields)
+            return self._to_data_literal(rows, schema_fields, transform_field_name)
         return self.load([], schema_fields)

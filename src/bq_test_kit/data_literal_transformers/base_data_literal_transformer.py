@@ -9,7 +9,7 @@
 import re
 from collections import OrderedDict
 from copy import deepcopy
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional
 
 from google.cloud.bigquery.schema import SchemaField
 from logzero import logger
@@ -19,6 +19,7 @@ from bq_test_kit.exceptions import (DataLiteralTransformException,
                                     InvalidInstanceException)
 from bq_test_kit.resource_loaders.base_resource_loader import \
     BaseResourceLoader
+from bq_test_kit.typing import DatumResource, SchemaResource, TypedDatum
 
 
 class BaseDataLiteralTransformer(SchemaMixin):
@@ -30,8 +31,6 @@ class BaseDataLiteralTransformer(SchemaMixin):
                               flags=re.S | re.IGNORECASE)
     # REGEX that identifies geography point
 
-    TypedDatum = Tuple[Union[BaseResourceLoader, str, List[str]], Union[BaseResourceLoader, str, List[SchemaField]]]
-
     def __init__(self) -> None:
         """
             Constructor of a data literal transformer.
@@ -42,9 +41,8 @@ class BaseDataLiteralTransformer(SchemaMixin):
         self.cast_datetime_like = False
         self.ignore_unknown_values_flag = False
 
-    def load(self,
-             datum: Union[BaseResourceLoader, str, List[str], None],
-             schema: Union[BaseResourceLoader, str, List[SchemaField]]) -> str:
+    def load(self, datum: DatumResource, schema: SchemaResource,
+             transform_field_name: Optional[Callable[[str], str]] = None) -> str:
         """
             Load inputs and transform them as data literal, preserving target schema with a fullfilled line.
             This fullfilled line is, of course, discarded from the literal datum.
@@ -57,15 +55,23 @@ class BaseDataLiteralTransformer(SchemaMixin):
                 datum in a file or a string containing lines of datum or a list of data or None.
             schema (Union[BaseResourceLoader, str, List[SchemaField]]):
                 schema to match with while transforming data to literal.
+            transform_field_name (Optional[Callable[[str], str]]):
+                function to change field name.
+                Used to transform given name as the output name.
+                Given a column _PARTITIONDATE in the schema, output name may look like _BQTK_PARTITIONDATE.
+                This allows storing technical columns into a table by renaming them on the fly.
 
         Returns:
             str: data literal
         """
         schema_fields = self.to_schema_field_list(schema)
-        return self._load(datum, schema_fields) if datum else self._empty_literal(schema_fields)
+        return (self._load(datum, schema_fields, transform_field_name)
+                if datum else
+                self._empty_literal(schema_fields, transform_field_name))
 
-    def _empty_literal(self, schema_fields: List[SchemaField]):
-        query, transform_errors = self.transform_to_literal({}, schema_fields)
+    def _empty_literal(self, schema_fields: List[SchemaField],
+                       transform_field_name: Optional[Callable[[str], str]]) -> str:
+        query, transform_errors = self.transform_to_literal({}, schema_fields, transform_field_name)
         if transform_errors:
             errors_str = ",\n".join(["\t" + error for error in transform_errors])
             raise DataLiteralTransformException(f"Exception happened with the following errors :\n{errors_str}")
@@ -74,9 +80,8 @@ class BaseDataLiteralTransformer(SchemaMixin):
         logger.debug("Empty literal generated as :\n%s", query)
         return query
 
-    def _load(self,
-              datum: Union[BaseResourceLoader, str, List[str]],
-              schema_fields: List[SchemaField]) -> str:
+    def _load(self, datum: DatumResource, schema_fields: List[SchemaField],
+              transform_field_name: Optional[Callable[[str], str]]) -> str:
         """
             Load inputs and transform them as data literal, preserving target schema with a fullfilled line.
             This fullfilled line is, of course, discarded from the literal datum.
@@ -86,17 +91,23 @@ class BaseDataLiteralTransformer(SchemaMixin):
                 datum in a file or a string containing lines of datum or a list of data.
             schema (Union[BaseResourceLoader, str, List[SchemaField]]):
                 schema to match with while transforming data to literal.
+            transform_field_name (Optional[Callable[[str], str]]):
+                function to change field name.
+                Used to transform given name as the output name.
+                Given a column _PARTITIONDATE in the schema, output name may look like _BQTK_PARTITIONDATE.
+                This allows storing technical columns into a table by renaming them on the fly.
 
         Returns:
             str: data literal
         """
         raise NotImplementedError("Must implement load method")
 
-    def _to_data_literal(self, rows: List[Dict[str, Any]], schema_fields: List[SchemaField]):
+    def _to_data_literal(self, rows: List[Dict[str, Any]], schema_fields: List[SchemaField],
+                         transform_field_name: Optional[Callable[[str], str]]) -> str:
         queries = []
         errors = []
         for i, row in enumerate(rows):
-            query, transform_errors = self.transform_to_literal(row, schema_fields)
+            query, transform_errors = self.transform_to_literal(row, schema_fields, transform_field_name)
             if transform_errors:
                 errors_str = ",\n".join(["\t" + error for error in transform_errors])
                 errors.append(f"Exception happened in line {i+1} with the following errors :\n{errors_str}")
@@ -168,16 +179,26 @@ class BaseDataLiteralTransformer(SchemaMixin):
         transformer.ignore_unknown_values_flag = ignore
         return transformer
 
-    def transform_to_literal(self, data_line: Dict[str, Any], schema: List[SchemaField]):
+    def transform_to_literal(self, data_line: Dict[str, Any], schema: List[SchemaField],
+                             transform_field_name: Optional[Callable[[str], str]]) -> str:
         """Transform dictionary to a data literal matching the given schema.
 
         Args:
             data_line (Dict[str, Any]): data_line which must be a dictionary since a schema is kind of record.
             schema (List[SchemaField]): schema to match the transformation with.
+            transform_field_name (Optional[Callable[[str], str]]):
+                function to change field name.
+                Used to transform given name as the output name.
+                Given a column _PARTITIONDATE in the schema, output name may look like _BQTK_PARTITIONDATE.
+                This allows storing technical columns into a table by renaming them on the fly.
         """
+
         # Disabling too many statements since this is related to nested functions.
         # Function scope is only for _transform_to_literal
         # pylint: disable=R0915
+
+        effective_transform_field_name = transform_field_name if transform_field_name else lambda x: x
+
         def _transform_repeated_field_to_literal(data_element: Any, schema_field: SchemaField, parent_path: str):
             current_projection = None
             errors = []
@@ -198,7 +219,7 @@ class BaseDataLiteralTransformer(SchemaMixin):
                     errors.extend(nested_errors)
                 else:
                     nested_queries = ", ".join([nested_query for nested_query, _ in nested_result])
-                    current_projection = f"[{nested_queries}] as {schema_field.name}"
+                    current_projection = f"[{nested_queries}] as {effective_transform_field_name(schema_field.name)}"
             else:
                 errors.append(f"{parent_path}.{schema_field.name} is not a list while schema is of type "
                               f"{str.upper(schema_field.field_type)} and has mode {schema_field.mode}")
@@ -262,7 +283,7 @@ class BaseDataLiteralTransformer(SchemaMixin):
             if errors:
                 return None, errors
             field_projection = (field_projection if schema_field.mode == "REPEATED"
-                                else f"{field_projection} as {schema_field.name}")
+                                else f"{field_projection} as {effective_transform_field_name(schema_field.name)}")
             return field_projection, None
 
         def _transform_struct_to_literal(data_element: Dict[str, Any], schema: List[SchemaField], parent_path: str,
@@ -288,7 +309,8 @@ class BaseDataLiteralTransformer(SchemaMixin):
                             errors.append(error)
                         elif child_key not in data_element or data_element[child_key] is None:
                             field_type = self.generate_data_type(schema_field)
-                            current_projection.append(f"cast(null as {field_type}) as {child_key}")
+                            projection = f"cast(null as {field_type}) as {effective_transform_field_name(child_key)}"
+                            current_projection.append(projection)
                         else:
                             field_projection, field_errors = None, None
                             if str.upper(schema_field.mode) == "REPEATED":
@@ -318,13 +340,13 @@ class BaseDataLiteralTransformer(SchemaMixin):
                 result = (None, errors)
             elif current_projection:
                 nested_query = ", ".join(current_projection)
-                alias = f" as {key}" if key else ""
+                alias = f" as {effective_transform_field_name(key)}" if key else ""
                 final_projection = f"struct({nested_query}){alias}" if parent_path else nested_query
                 result = (final_projection, None)
             else:
                 # if there is no projection, this means that we have a null struct.
                 field_type = self.generate_data_type(schema)
-                alias = f" as {key}" if key else ""
+                alias = f" as {effective_transform_field_name(key)}" if key else ""
                 final_projection = f"cast(null as {field_type}){alias}"
                 result = (final_projection, None)
             return result
@@ -334,7 +356,7 @@ class BaseDataLiteralTransformer(SchemaMixin):
         return query, errors
 
     @staticmethod
-    def _load_lines_as_array(datum: Union[BaseResourceLoader, str, List[str]]) -> List[Any]:
+    def _load_lines_as_array(datum: DatumResource) -> List[Any]:
         datum_lines = None
         if isinstance(datum, BaseResourceLoader):
             datum_lines = datum.load().splitlines(keepends=False)

@@ -1,0 +1,48 @@
+[{
+    "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC",
+    "_PARTITIONDATE": "2020-11-26",
+    "_PARTITIONSTRING": "F_STRING",
+    "_TABLE_STRING": "F_STRING",
+    "_FILE_STRING": "F_STRING",
+    "_ROW_TIMESTAMP": "2020-11-26 17:09:03.967259 UTC",
+    "_PARTITIONSTRUCT": {
+        "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC",
+        "_PARTITIONDATE": "2020-11-26",
+        "_PARTITIONSTRING": "F_STRING",
+        "_TABLE_STRING": "F_STRING",
+        "_FILE_STRING": "F_STRING",
+        "_ROW_TIMESTAMP": "2020-11-26 17:09:03.967259 UTC",
+        "_PARTITIONSTRUCTR": [
+            {
+                "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC",
+                "_PARTITIONDATE": "2020-11-26",
+                "_PARTITIONSTRING": "F_STRING",
+                "_TABLE_STRING": "F_STRING",
+                "_FILE_STRING": "F_STRING",
+                "_ROW_TIMESTAMP": "2020-11-26 17:09:03.967259 UTC"
+            }
+        ],
+        "_PARTITIONTIMER": ["2020-11-26 17:09:03.967259 UTC"],
+        "_PARTITIONDATER": ["2020-11-26"],
+        "_PARTITIONSTRINGR": ["F_STRING"],
+        "_TABLE_STRINGR": ["F_STRING"],
+        "_FILE_STRINGR": ["F_STRING"],
+        "_ROW_TIMESTAMPR": ["2020-11-26 17:09:03.967259 UTC"]
+    },
+    "_PARTITIONSTRUCTR": [
+        {
+            "_PARTITIONTIME": "2020-11-26 17:09:03.967259 UTC",
+            "_PARTITIONDATE": "2020-11-26",
+            "_PARTITIONSTRING": "F_STRING",
+            "_TABLE_STRING": "F_STRING",
+            "_FILE_STRING": "F_STRING",
+            "_ROW_TIMESTAMP": "2020-11-26 17:09:03.967259 UTC"
+        }
+    ],
+    "_PARTITIONTIMER": ["2020-11-26 17:09:03.967259 UTC"],
+    "_PARTITIONDATER": ["2020-11-26"],
+    "_PARTITIONSTRINGR": ["F_STRING"],
+    "_TABLE_STRINGR": ["F_STRING"],
+    "_FILE_STRINGR": ["F_STRING"],
+    "_ROW_TIMESTAMPR": ["2020-11-26 17:09:03.967259 UTC"]
+}]
