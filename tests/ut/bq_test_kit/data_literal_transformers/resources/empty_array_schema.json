@@ -1,0 +1,248 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "f_struct",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "f_string",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_repeated_struct",
+        "type": "RECORD",
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "f_string",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_bytes",
+            "type": "BYTES"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_int",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_float",
+            "type": "FLOAT"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_bool",
+            "type": "BOOLEAN"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_timestamp",
+            "type": "TIMESTAMP"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_date",
+            "type": "DATE"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_time",
+            "type": "TIME"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_datetime",
+            "type": "DATETIME"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_numeric",
+            "type": "NUMERIC"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "f_geography",
+            "type": "GEOGRAPHY"
+          }
+        ]
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_string_repeated",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_bytes_repeated",
+        "type": "BYTES"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_int_repeated",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_float_repeated",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_bool_repeated",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_timestamp_repeated",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_date_repeated",
+        "type": "DATE"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_time_repeated",
+        "type": "TIME"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_datetime_repeated",
+        "type": "DATETIME"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_numeric_repeated",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "f_geography_repeated",
+        "type": "GEOGRAPHY"
+      }
+    ]
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_repeated_struct",
+    "type": "RECORD",
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "f_string",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_bytes",
+        "type": "BYTES"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_int",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_float",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_bool",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_timestamp",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_date",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_time",
+        "type": "TIME"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_datetime",
+        "type": "DATETIME"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_numeric",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "f_geography",
+        "type": "GEOGRAPHY"
+      }
+    ]
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_string_repeated",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_bytes_repeated",
+    "type": "BYTES"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_int_repeated",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_float_repeated",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_bool_repeated",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_timestamp_repeated",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_date_repeated",
+    "type": "DATE"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_time_repeated",
+    "type": "TIME"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_datetime_repeated",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_numeric_repeated",
+    "type": "NUMERIC"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "f_geography_repeated",
+    "type": "GEOGRAPHY"
+  }
+]

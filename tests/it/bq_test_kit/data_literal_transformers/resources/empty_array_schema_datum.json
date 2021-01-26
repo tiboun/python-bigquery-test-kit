@@ -1,0 +1,30 @@
+[
+    {
+        "f_struct": {
+            "f_repeated_struct": [],
+            "f_string_repeated": [],
+            "f_bytes_repeated": [],
+            "f_int_repeated": [],
+            "f_float_repeated": [],
+            "f_bool_repeated": [],
+            "f_timestamp_repeated": [],
+            "f_date_repeated": [],
+            "f_time_repeated": [],
+            "f_datetime_repeated": [],
+            "f_numeric_repeated": [],
+            "f_geography_repeated": []
+        },
+        "f_repeated_struct": [],
+        "f_string_repeated": [],
+        "f_bytes_repeated": [],
+        "f_int_repeated": [],
+        "f_float_repeated": [],
+        "f_bool_repeated": [],
+        "f_timestamp_repeated": [],
+        "f_date_repeated": [],
+        "f_time_repeated": [],
+        "f_datetime_repeated": [],
+        "f_numeric_repeated": [],
+        "f_geography_repeated": []
+    }
+]

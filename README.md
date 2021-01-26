@@ -324,6 +324,10 @@ Windows
 Changelog
 =========
 
+0.4.1
+-----
+ - fix empty array generation for data literals
+
 0.4.0
 -----
  - add ability to rely on temp tables or data literals with query template DSL

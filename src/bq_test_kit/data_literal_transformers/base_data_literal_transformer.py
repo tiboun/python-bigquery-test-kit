@@ -203,23 +203,28 @@ class BaseDataLiteralTransformer(SchemaMixin):
             current_projection = None
             errors = []
             if isinstance(data_element[schema_field.name], list):
-                nested_result = None
-                if str.upper(schema_field.field_type) == "RECORD":
-                    nested_result = [_transform_struct_to_literal(element, schema_field.fields,
-                                                                  f"{parent_path}.{schema_field.name}[{i}]", None)
-                                     for i, element in enumerate(data_element[schema_field.name])]
+                target_name = effective_transform_field_name(schema_field.name)
+                if len(data_element[schema_field.name]) == 0:
+                    field_type = self.generate_data_type(schema_field)
+                    current_projection = f"cast([] as {field_type}) as {target_name}"
                 else:
-                    nested_result = [_transform_field_to_literal(element, schema_field,
-                                                                 f"{parent_path}.{schema_field.name}[{i}]")
-                                     for i, element in enumerate(data_element[schema_field.name])]
-                nested_errors = [nested_error
-                                 for _, nested_errors in nested_result if nested_errors
-                                 for nested_error in nested_errors if nested_error]
-                if nested_errors:
-                    errors.extend(nested_errors)
-                else:
-                    nested_queries = ", ".join([nested_query for nested_query, _ in nested_result])
-                    current_projection = f"[{nested_queries}] as {effective_transform_field_name(schema_field.name)}"
+                    nested_result = None
+                    if str.upper(schema_field.field_type) == "RECORD":
+                        nested_result = [_transform_struct_to_literal(element, schema_field.fields,
+                                                                    f"{parent_path}.{schema_field.name}[{i}]", None)
+                                         for i, element in enumerate(data_element[schema_field.name])]
+                    else:
+                        nested_result = [_transform_field_to_literal(element, schema_field,
+                                                                    f"{parent_path}.{schema_field.name}[{i}]")
+                                         for i, element in enumerate(data_element[schema_field.name])]
+                    nested_errors = [nested_error
+                                     for _, nested_errors in nested_result if nested_errors
+                                     for nested_error in nested_errors if nested_error]
+                    if nested_errors:
+                        errors.extend(nested_errors)
+                    else:
+                        nested_queries = ", ".join([nested_query for nested_query, _ in nested_result])
+                        current_projection = f"[{nested_queries}] as {target_name}"
             else:
                 errors.append(f"{parent_path}.{schema_field.name} is not a list while schema is of type "
                               f"{str.upper(schema_field.field_type)} and has mode {schema_field.mode}")
