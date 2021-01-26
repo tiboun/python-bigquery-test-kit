@@ -1,3 +1,13 @@
+## v0.4.0 (2021-01-26)
+
+### Fix
+
+- generate empty data literal when json array is empty
+
+### Feat
+
+- use temp tables or data literals in query template
+
 ## v0.3.1 (2020-12-17)
 
 ### Fix
