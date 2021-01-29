@@ -231,6 +231,18 @@ def test_rewrite_technical_column(bqtk: BQTestKit):
                  .add_interpolator(JinjaInterpolator()) \
                  .run()
     assert len(result.rows) == 1
+    result = bqtk.query_template(from_="""
+                    select * from technical_column_table
+                    UNION ALL
+                    select * from {{technical_column_table}}
+                    """) \
+                 .with_temp_tables((transformer, {
+                     "technical_column_table": (complex_datum, complex_schema)
+                  })) \
+                 .add_interpolator(JinjaInterpolator()) \
+                 .run()
+    assert len(result.rows) == 2
+    assert result.rows[0] == result.rows[1]
 
 
 def test_technical_column_with_datum_temp_table(bqtk: BQTestKit):
@@ -257,6 +269,19 @@ def test_technical_column_with_datum_temp_table(bqtk: BQTestKit):
                  .add_interpolator(JinjaInterpolator()) \
                  .run()
     assert len(result.rows) == 1
+    result = bqtk.query_template(from_="""
+                    select * from technical_column_table
+                    UNION ALL
+                    select * from {{technical_column_table}}
+                    """) \
+                 .with_datum({
+                     "technical_column_table": (complex_datum, complex_schema)
+                  }) \
+                 .loaded_with(transformer) \
+                 .add_interpolator(JinjaInterpolator()) \
+                 .run()
+    assert len(result.rows) == 2
+    assert result.rows[0] == result.rows[1]
 
 
 def test_technical_column_with_datum_literal(bqtk: BQTestKit):

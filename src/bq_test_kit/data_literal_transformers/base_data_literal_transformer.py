@@ -306,7 +306,7 @@ class BaseDataLiteralTransformer(SchemaMixin):
                 for child_key in all_keys:
                     if child_key not in schema_fields_name:
                         if not self.ignore_unknown_values_flag:
-                            errors.append(f"Key {child_key} not in schema")
+                            errors.append(f"Key {child_key} @ .{parent_path} not in schema")
                     else:
                         schema_field = next(field for field in schema if field.name == child_key)
                         error = _check_required_field(data_element, schema_field, parent_path)

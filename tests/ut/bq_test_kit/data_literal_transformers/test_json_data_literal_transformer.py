@@ -124,9 +124,9 @@ def test_json_load_with_extra_column():
             PackageFileLoader("tests/ut/bq_test_kit/data_literal_transformers/resources/simple_schema.json")
         )
     assert str(exception.value) == ("Exception happened in line 1 with the following errors :\n"
-                                    "\tKey f_string_extra not in schema\n\n"
+                                    "\tKey f_string_extra @ . not in schema\n\n"
                                     "Exception happened in line 2 with the following errors :\n"
-                                    "\tKey f_string_extra2 not in schema")
+                                    "\tKey f_string_extra2 @ . not in schema")
     query = transformer.ignore_unknown_values().use_datetime_like_cast().load(
         PackageFileLoader("tests/ut/bq_test_kit/data_literal_transformers/resources/"
                           "simple_schema_with_extra_datum.json"),
