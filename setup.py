@@ -59,6 +59,6 @@ with read('README.md') as f:
                     'License :: OSI Approved :: MIT License',
                     'Programming Language :: Python :: 3'
                 ],
-                keywords='BigQuery testing test-kit bqtk dataset table isolation dsl immutability',
+                keywords='bigquery testing test-kit bqtk dataset table isolation dsl immutability sql',
                 python_requires='>=3'
             )

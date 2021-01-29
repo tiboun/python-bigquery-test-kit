@@ -324,6 +324,11 @@ Windows
 Changelog
 =========
 
+0.4.2
+-----
+ - remove load job config in log
+ - fix temp tables query generation
+
 0.4.1
 -----
  - fix empty array generation for data literals

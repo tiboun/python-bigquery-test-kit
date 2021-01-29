@@ -1,3 +1,10 @@
+## v0.4.2 (2021-01-29)
+
+### Fix
+
+- remove load job config since it doesn't have any string representation
+- query generation for temp tables
+
 ## v0.4.1 (2021-01-26)
 
 ### Fix
