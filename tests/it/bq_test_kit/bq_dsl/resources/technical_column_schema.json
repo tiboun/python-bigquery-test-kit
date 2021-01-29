@@ -36,136 +36,136 @@
     "fields": [
       {
         "mode": "NULLABLE",
-        "name": "_PARTITIONTIME",
+        "name": "_PARTITIONTIMESTRUCT",
         "type": "TIMESTAMP"
       },
       {
         "mode": "NULLABLE",
-        "name": "_PARTITIONDATE",
+        "name": "_PARTITIONDATESTRUCT",
         "type": "DATE"
       },
       {
         "mode": "NULLABLE",
-        "name": "_PARTITIONSTRING",
+        "name": "_PARTITIONSTRINGSTRUCT",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "_TABLE_STRING",
+        "name": "_TABLE_STRINGSTRUCT",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "_FILE_STRING",
+        "name": "_FILE_STRINGSTRUCT",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "_ROW_TIMESTAMP",
+        "name": "_ROW_TIMESTAMPSTRUCT",
         "type": "TIMESTAMP"
       },
       {
         "mode": "REPEATED",
-        "name": "_PARTITIONSTRUCTR",
+        "name": "_PARTITIONSTRUCTRSTRUCT",
         "type": "RECORD",
         "fields": [
           {
             "mode": "NULLABLE",
-            "name": "_PARTITIONTIME",
+            "name": "_PARTITIONTIMESTRUCTRSTRUCT",
             "type": "TIMESTAMP"
           },
           {
             "mode": "NULLABLE",
-            "name": "_PARTITIONDATE",
+            "name": "_PARTITIONDATESTRUCTRSTRUCT",
             "type": "DATE"
           },
           {
             "mode": "NULLABLE",
-            "name": "_PARTITIONSTRING",
+            "name": "_PARTITIONSTRINGSTRUCTRSTRUCT",
             "type": "STRING"
           },
           {
             "mode": "NULLABLE",
-            "name": "_TABLE_STRING",
+            "name": "_TABLE_STRINGSTRUCTRSTRUCT",
             "type": "STRING"
           },
           {
             "mode": "NULLABLE",
-            "name": "_FILE_STRING",
+            "name": "_FILE_STRINGSTRUCTRSTRUCT",
             "type": "STRING"
           },
           {
             "mode": "NULLABLE",
-            "name": "_ROW_TIMESTAMP",
+            "name": "_ROW_TIMESTAMPSTRUCTRSTRUCT",
             "type": "TIMESTAMP"
           }
         ]
       },
       {
         "mode": "REPEATED",
-        "name": "_PARTITIONTIMER",
+        "name": "_PARTITIONTIMESTRUCTR",
         "type": "TIMESTAMP"
       },
       {
         "mode": "REPEATED",
-        "name": "_PARTITIONDATER",
+        "name": "_PARTITIONDATESTRUCTR",
         "type": "DATE"
       },
       {
         "mode": "REPEATED",
-        "name": "_PARTITIONSTRINGR",
+        "name": "_PARTITIONSTRINGSTRUCTR",
         "type": "STRING"
       },
       {
         "mode": "REPEATED",
-        "name": "_TABLE_STRINGR",
+        "name": "_TABLE_STRINGSTRUCTR",
         "type": "STRING"
       },
       {
         "mode": "REPEATED",
-        "name": "_FILE_STRINGR",
+        "name": "_FILE_STRINGSTRUCTR",
         "type": "STRING"
       },
       {
         "mode": "REPEATED",
-        "name": "_ROW_TIMESTAMPR",
+        "name": "_ROW_TIMESTAMPSTRUCTR",
         "type": "TIMESTAMP"
       }
     ]
   },
   {
     "mode": "REPEATED",
-    "name": "_PARTITIONSTRUCTR",
+    "name": "_PARTITIONRSTRUCT",
     "type": "RECORD",
     "fields": [
       {
         "mode": "NULLABLE",
-        "name": "_PARTITIONTIME",
+        "name": "_PARTITIONTIMERSTRUCT",
         "type": "TIMESTAMP"
       },
       {
         "mode": "NULLABLE",
-        "name": "_PARTITIONDATE",
+        "name": "_PARTITIONDATERSTRUCT",
         "type": "DATE"
       },
       {
         "mode": "NULLABLE",
-        "name": "_PARTITIONSTRING",
+        "name": "_PARTITIONSTRINGRSTRUCT",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "_TABLE_STRING",
+        "name": "_TABLE_STRINGRSTRUCT",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "_FILE_STRING",
+        "name": "_FILE_STRINGRSTRUCT",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "_ROW_TIMESTAMP",
+        "name": "_ROW_TIMESTAMPRSTRUCT",
         "type": "TIMESTAMP"
       }
     ]

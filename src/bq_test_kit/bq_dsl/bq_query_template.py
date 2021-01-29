@@ -6,6 +6,7 @@
 # C0114 disabled because this module contains only one class
 # pylint: disable=C0114
 
+import uuid
 from copy import deepcopy
 from functools import reduce
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -434,22 +435,30 @@ class BQQueryTemplate(SchemaMixin):
         # Function scope is only for _transform_to_literal
         # pylint: disable=R0915
 
-        def _transform_repeated_field_to_literal(schema_field: SchemaField):
+        def _transform_repeated_field_to_literal(parent_path: Optional[str], schema_field: SchemaField):
             current_projection = None
             nested_result = None
+            unnest_name = "ut" + str(uuid.uuid4()).replace("-", "_")
             if str.upper(schema_field.field_type) == "RECORD":
-                nested_result = _transform_struct_to_literal(schema_field.fields, False, None)
+                nested_result = _transform_struct_to_literal(schema_field.fields, False, unnest_name, None)
             else:
-                nested_result = "unnest_table"
+                nested_result = unnest_name
+            field_projection = _prefix_column(parent_path, effective_transform_field_name(schema_field.name))
             current_projection = f"(select array_agg({nested_result}) " \
-                                 f"from unnest({effective_transform_field_name(schema_field.name)}) unnest_table) " \
+                                 f"from unnest({field_projection}) {unnest_name}) " \
                                  f"as {schema_field.name}"
             return current_projection
 
-        def _transform_field_to_literal(schema_field: SchemaField):
-            return f"{effective_transform_field_name(schema_field.name)} as {schema_field.name}"
+        def _prefix_column(parent_path: Optional[str], name: str):
+            parent_prefix = f"{parent_path}." if parent_path else ""
+            return f"{parent_prefix}{name}"
 
-        def _transform_struct_to_literal(schema: List[SchemaField], is_root: bool, key: Optional[str]):
+        def _transform_field_to_literal(parent_path: Optional[str], schema_field: SchemaField):
+            field_projection = _prefix_column(parent_path, effective_transform_field_name(schema_field.name))
+            return f"{field_projection} as {schema_field.name}"
+
+        def _transform_struct_to_literal(schema: List[SchemaField], is_root: bool,
+                                         parent_path: Optional[str], key: Optional[str]):
             # Disable this too many local variable. Didn't find a way to simplify this.
             # pylint: disable=R0914
             # Disable too many branches since rework may make it less readable (dispatch of functions)
@@ -461,18 +470,19 @@ class BQQueryTemplate(SchemaMixin):
                 schema_field = next(field for field in schema if field.name == child_key)
                 field_projection = None
                 if str.upper(schema_field.mode) == "REPEATED":
-                    field_projection = _transform_repeated_field_to_literal(schema_field)
+                    field_projection = _transform_repeated_field_to_literal(parent_path, schema_field)
                 elif str.upper(schema_field.field_type) == "RECORD":
-                    field_projection = _transform_struct_to_literal(schema_field.fields, False, child_key)
+                    field_path = _prefix_column(parent_path, effective_transform_field_name(child_key))
+                    field_projection = _transform_struct_to_literal(schema_field.fields, False, field_path, child_key)
                 else:
-                    field_projection = _transform_field_to_literal(schema_field)
+                    field_projection = _transform_field_to_literal(parent_path, schema_field)
                 current_projection.append(field_projection)
             nested_query = ", ".join(current_projection)
             alias = f" as {effective_transform_field_name(key)}" if key else ""
             final_projection = nested_query if is_root else f"struct({nested_query}){alias}"
             result = final_projection
             return result
-        query = _transform_struct_to_literal(schema, True, None)
+        query = _transform_struct_to_literal(schema, True, None, None)
         query = f"(select {query} from {table_name})"
         return query
 
