@@ -54,8 +54,8 @@ class BaseDataLoader():
             fqdn = self.table.fqdn()
             _partition = "$" + self.partition if self.partition else ""
             target = fqdn + _partition
-            logger.info("Loading %s into %s with job config %s",
-                        self.from_.absolute_path(), target, self.load_job_config)
+            logger.info("Loading %s into %s",
+                        self.from_.absolute_path(), target)
             load_job = self._bq_client.load_table_from_file(
                 source_file,
                 target,
