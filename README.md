@@ -1,9 +1,9 @@
-# BQ-test-kit, a testing framework to be more confident in your BigQuery SQL
+# bigquery-test-kit, a testing framework to be more confident in your BigQuery SQL
 
 [BigQuery](https://cloud.google.com/bigquery) doesn't provide any locally runnabled server,
 hence tests need to be run in Big Query itself.
 
-BQ-test-kit enables Big Query testing by providing you an almost immutable DSL that allows you to :
+bigquery-test-kit enables Big Query testing by providing you an almost immutable DSL that allows you to :
 
  - create and delete dataset
  - create and delete table, partitioned or not
@@ -323,6 +323,10 @@ Windows
 
 Changelog
 =========
+
+0.4.3
+-----
+ - rename project as python-bigquery-test-kit
 
 0.4.2
 -----

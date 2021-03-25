@@ -35,7 +35,7 @@ with read('README.md') as f:
             setup(
                 name='bq-test-kit',
                 version=cz_content['commitizen']['version'],
-                url='https://github.com/tiboun/python-bq-test-kit',
+                url='https://github.com/tiboun/python-bigquery-test-kit',
                 author='Bounkong Khamphousone',
                 author_email='bounkong@gmail.com',
                 py_modules=[splitext(basename(p))[0] for p in glob('src/*.py')],
@@ -59,6 +59,6 @@ with read('README.md') as f:
                     'License :: OSI Approved :: MIT License',
                     'Programming Language :: Python :: 3'
                 ],
-                keywords='bigquery testing test-kit bqtk dataset table isolation dsl immutability sql',
+                keywords='bigquery testing test-kit bqtk dataset table isolation dsl immutability sql test',
                 python_requires='>=3'
             )
