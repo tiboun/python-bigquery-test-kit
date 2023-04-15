@@ -4,11 +4,12 @@
 # https://opensource.org/licenses/MIT
 
 import pytest
-from google.api_core.exceptions import NotFound
+from google.api_core.exceptions import NotFound, BadRequest
 from google.cloud.bigquery.schema import SchemaField
 from google.cloud.bigquery.table import PartitionRange, RangePartitioning
 
 from bq_test_kit import BQTestKit
+from bq_test_kit.bq_dsl.bq_resources.clustering import Clustering
 from bq_test_kit.bq_dsl.bq_resources.partitions import (IngestionTime, Range,
                                                         TimeField)
 from bq_test_kit.bq_dsl.bq_resources.partitions import \
@@ -79,7 +80,7 @@ def test_change_create_options(bqtk: BQTestKit):
 def test_change_partition_by_ingestion_time(bqtk: BQTestKit):
     with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
         with ds.table("table_bar"). \
-             partition_by(IngestionTime(type_=TimePartitioningType.MONTH)).isolate() as t:
+                partition_by(IngestionTime(type_=TimePartitioningType.MONTH)).isolate() as t:
             show_res = t.show()
             assert show_res is not None
             assert show_res.time_partitioning.type_ == TPT.MONTH.value
@@ -91,9 +92,9 @@ def test_change_partition_by_day_time_field(bqtk: BQTestKit):
     with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
         table_bar_schema = [SchemaField("my_time", "TIMESTAMP")]
         with ds.table("table_bar"). \
-             with_schema(from_=table_bar_schema). \
-             partition_by(TimeField("my_time", type_=TPT.DAY)). \
-             isolate() as t:
+                with_schema(from_=table_bar_schema). \
+                partition_by(TimeField("my_time", type_=TPT.DAY)). \
+                isolate() as t:
             show_res = t.show()
             assert show_res is not None
             assert show_res.time_partitioning.type_ == TPT.DAY.value
@@ -105,9 +106,9 @@ def test_change_partition_by_hour_time_field(bqtk: BQTestKit):
     with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
         table_bar_schema = [SchemaField("my_time", "TIMESTAMP")]
         with ds.table("table_bar"). \
-             with_schema(from_=table_bar_schema). \
-             partition_by(TimeField("my_time", type_=TPT.HOUR)). \
-             isolate() as t:
+                with_schema(from_=table_bar_schema). \
+                partition_by(TimeField("my_time", type_=TPT.HOUR)). \
+                isolate() as t:
             show_res = t.show()
             assert show_res is not None
             assert show_res.time_partitioning.type_ == TPT.HOUR.value
@@ -119,9 +120,9 @@ def test_change_partition_by_month_time_field(bqtk: BQTestKit):
     with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
         table_bar_schema = [SchemaField("my_time", "TIMESTAMP")]
         with ds.table("table_bar"). \
-             with_schema(from_=table_bar_schema). \
-             partition_by(TimeField("my_time", type_=TPT.MONTH)). \
-             isolate() as t:
+                with_schema(from_=table_bar_schema). \
+                partition_by(TimeField("my_time", type_=TPT.MONTH)). \
+                isolate() as t:
             show_res = t.show()
             assert show_res is not None
             assert show_res.time_partitioning.type_ == TPT.MONTH.value
@@ -133,9 +134,9 @@ def test_change_partition_by_year_time_field(bqtk: BQTestKit):
     with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
         table_bar_schema = [SchemaField("my_time", "TIMESTAMP")]
         with ds.table("table_bar"). \
-             with_schema(from_=table_bar_schema). \
-             partition_by(TimeField("my_time", type_=TPT.YEAR)). \
-             isolate() as t:
+                with_schema(from_=table_bar_schema). \
+                partition_by(TimeField("my_time", type_=TPT.YEAR)). \
+                isolate() as t:
             show_res = t.show()
             assert show_res is not None
             assert show_res.time_partitioning.type_ == TPT.YEAR.value
@@ -155,12 +156,12 @@ def test_change_partition_by_range(bqtk: BQTestKit):
     with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
         table_bar_schema = [SchemaField("my_int", "int64")]
         with ds.table("table_bar"). \
-             with_schema(from_=table_bar_schema). \
-             partition_by(Range(on_field="my_int",
-                                start=0,
-                                end=10000,
-                                interval=10)). \
-             isolate() as t:
+                with_schema(from_=table_bar_schema). \
+                partition_by(Range(on_field="my_int",
+                                   start=0,
+                                   end=10000,
+                                   interval=10)). \
+                isolate() as t:
             show_res = t.show()
             assert show_res is not None
             assert show_res.time_partitioning is None
@@ -176,4 +177,37 @@ def test_change_partition_by_invalid_field_range(bqtk: BQTestKit):
                                    start=0,
                                    end=10000,
                                    interval=10)). \
+                isolate().create()
+
+
+def test_clustering(bqtk: BQTestKit):
+    with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
+        table_bar_schema = [SchemaField("user_id", "STRING"), SchemaField("geo", "GEOGRAPHY")]
+        with ds.table("table_bar"). \
+                with_schema(from_=table_bar_schema). \
+                cluster_by(Clustering("user_id", "geo")). \
+                isolate() as t:
+            show_res = t.show()
+            assert show_res is not None
+            assert show_res.clustering_fields == ["user_id", "geo"]
+
+
+def test_clustering_missing_field(bqtk: BQTestKit):
+    with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
+        table_bar_schema = [SchemaField("user_id", "STRING"), SchemaField("geo", "GEOGRAPHY")]
+        with pytest.raises(BadRequest):
+            ds.table("table_bar"). \
+                with_schema(from_=table_bar_schema). \
+                cluster_by(Clustering("missing_field")). \
+                isolate().create()
+
+
+def test_clustering_wrong_field_type(bqtk: BQTestKit):
+    with bqtk.project("it").dataset("dataset_foo").isolate() as ds:
+        table_bar_schema = [SchemaField("user_id", "STRING"), SchemaField("geo", "GEOGRAPHY"),
+                            SchemaField("weird_field", "RECORD")]
+        with pytest.raises(BadRequest):
+            ds.table("table_bar"). \
+                with_schema(from_=table_bar_schema). \
+                cluster_by(Clustering("weird_field")). \
                 isolate().create()

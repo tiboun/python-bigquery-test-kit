@@ -15,6 +15,7 @@ from google.cloud.bigquery.table import Table as BQTable
 from logzero import logger
 
 from bq_test_kit.bq_dsl.bq_resources.base_bq_resource import BaseBQResource
+from bq_test_kit.bq_dsl.bq_resources.clustering import Clustering
 from bq_test_kit.bq_dsl.bq_resources.data_loaders import (DsvDataLoader,
                                                           JsonDataLoader)
 from bq_test_kit.bq_dsl.bq_resources.partitions import (BasePartition,
@@ -37,6 +38,7 @@ class Table(BaseBQResource, SchemaMixin):
                  bqtk_config: BQTestKitConfig,
                  isolate_with=lambda x: x.name,
                  partition_type: BasePartition = NoPartition(),
+                 clustering: Clustering = Clustering(),
                  schema: Union[BaseResourceLoader, str, List[SchemaField]] = None,
                  **create_options) -> None:
         """Constructor of Table
@@ -53,6 +55,7 @@ class Table(BaseBQResource, SchemaMixin):
             isolate_with (Callable[[Dataset], str], optional): lambda x -> str where x is itself.
                 Defaults to lambda x:x.name, that is to say, no isolation.
             partition_type (BasePartition): Kind of partition for the table. Default to NoPartition().
+            clustering (Clustering): Fields to cluster the table on. Defaults to no clustering.
             schema (Union[BaseResourceLoader, str, List[SchemaField]], optional):
                 Schema of the table. May be either :
                     - a string which contains BigQuery json schema
@@ -72,6 +75,7 @@ class Table(BaseBQResource, SchemaMixin):
         self.create_options = create_options
         self.resource_strategy = resource_strategy
         self.partition_type = partition_type
+        self.clustering = clustering
         self.schema = schema if schema else []
 
     def __enter__(self):
@@ -180,6 +184,20 @@ class Table(BaseBQResource, SchemaMixin):
         table.partition_type = partition_type
         return table
 
+    def cluster_by(self, clustering: Clustering):
+        """Define the clustering of the current table.
+        https://cloud.google.com/bigquery/docs/creating-clustered-tables
+
+        Args:
+            clustering (Clustering): clustering definition for the table
+
+        Returns:
+            Table: new instance of Table with the clustering set.
+        """
+        table = deepcopy(self)
+        table.clustering = clustering
+        return table
+
     def with_schema(self, *, from_: Union[BaseResourceLoader, str, List[SchemaField]]):
         """Define the schema of the current table.
 
@@ -241,6 +259,7 @@ class Table(BaseBQResource, SchemaMixin):
         try:
             bqtable: BQTable = BQTable(fqdn, schema=self.schema)
             bqtable = self.partition_type.apply(bqtable)
+            bqtable = self.clustering.apply(bqtable)
             self._bq_client.create_table(bqtable, **self.create_options)
         except Exception:
             logger.error("Failed to create table %s with options %s.", fqdn, self.create_options)
@@ -256,7 +275,7 @@ class Table(BaseBQResource, SchemaMixin):
             BQTable: BigQuery table infos.
         """
         fqdn = self.fqdn()
-        logger.info("Deleting dataset %s", fqdn)
+        logger.info("Showing table %s", fqdn)
         return self._bq_client.get_table(fqdn)
 
     def delete(self) -> None:
@@ -305,6 +324,7 @@ class Table(BaseBQResource, SchemaMixin):
             resource_strategy=deepcopy(self.resource_strategy, memo),
             isolate_with=deepcopy(self.isolate_func, memo),
             partition_type=deepcopy(self.partition_type),
+            clustering=deepcopy(self.clustering),
             schema=deepcopy(self.schema),
             **deepcopy(self.create_options, memo)
         )
