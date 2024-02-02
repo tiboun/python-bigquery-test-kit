@@ -24,9 +24,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install setuptools wheel twine pyyaml
     - name: Build and publish
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
+        cat <<EOF > .pypirc
+        [pypi]
+        username = __token__
+        password = ${{ secrets.PYPI_APITOKEN }}
+        EOF
         python setup.py sdist bdist_wheel
-        twine upload dist/*
+        twine check dist/*
+        twine upload --config-file .pypirc dist/*

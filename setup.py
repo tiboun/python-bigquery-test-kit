@@ -33,7 +33,7 @@ with read('README.md') as f:
         with read('.cz.yaml') as cz:
             cz_content = yaml.load(cz, Loader=yaml.SafeLoader)
             setup(
-                name='bq-test-kit',
+                name='bigquery-test-kit',
                 version=cz_content['commitizen']['version'],
                 url='https://github.com/tiboun/python-bigquery-test-kit',
                 author='Bounkong Khamphousone',
