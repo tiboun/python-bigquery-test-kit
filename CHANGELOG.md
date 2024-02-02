@@ -1,3 +1,9 @@
+## v0.5.0 (2024-02-03)
+
+### Feat
+
+- add clustering support to tables (thanks to @ckchow)
+
 ## v0.4.3 (2021-03-25)
 
 ### Fix

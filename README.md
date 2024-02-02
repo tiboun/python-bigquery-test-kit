@@ -324,6 +324,10 @@ Windows
 Changelog
 =========
 
+0.5.0
+-----
+ - add clustering support to tables (thanks to @ckchow)
+
 0.4.3
 -----
  - rename project as python-bigquery-test-kit
